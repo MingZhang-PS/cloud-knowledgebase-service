@@ -1,0 +1,25 @@
+replicaCount: 2
+
+image:
+  tag: 0.5.2
+  registry: iregistrycn.dev.coresuite.com
+
+docker:
+  logs:
+    cluster: cn-1
+    logstashHosts: sh1aelks.coresuite.com,sh2belks.coresuite.com
+
+ingress:
+  hosts:
+  - ingress.cn-1.coreinfra.io
+  - cn.coresuite.com
+  - cn.coresystems.net
+
+service:
+  hostname: cn-1.coreinfra.io
+
+config:
+  example: "Example value from config map. cn-1 values"
+  logging:
+    level:
+      org.zalando.logbook.Logbook: DEBUG

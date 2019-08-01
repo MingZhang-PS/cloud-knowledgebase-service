@@ -1,0 +1,20 @@
+replicaCount: 2
+
+image:
+  tag: auto-filled-by-piepline
+
+docker:
+  logs:
+    cluster: qt-1
+
+ingress:
+  hosts:
+    - ingress.qt-1.coreinfra.io
+    - gw.qt-1.coreinfra.io
+    - qt.coresystems.net
+
+service:
+  hostname: qt-1.coreinfra.io
+
+config:
+  example: "Example value from config map. qt-1 values"

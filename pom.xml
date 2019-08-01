@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.sap.fsm.springboot.parent</groupId>
+        <artifactId>cloud-microservice-parent</artifactId>
+        <version>0.6.9</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.sap.fsm</groupId>
+    <artifactId>cloud-knowledgebase-service</artifactId>
+    <version>0.0.1</version>
+    <packaging>jar</packaging>
+
+    <name>cloud-knowledgebase-service</name>
+    <description>knowledge base springboot backend</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <lombok.version>1.16.16</lombok.version>
+        <modelmapper.version>2.3.2</modelmapper.version>
+        <!-- CUSTOM STARTERS -->
+        <starter-common.version>0.5.30</starter-common.version>
+        <starter-logging.version>0.9.8</starter-logging.version>
+        <starter-management.version>0.9.11</starter-management.version>
+        <starter-swagger.version>0.9.13</starter-swagger.version>
+        <starter-tracing.version>0.9.17</starter-tracing.version>
+        <starter-test.version>0.9.15</starter-test.version>
+        <starter-db.version>0.2.8</starter-db.version>
+    </properties>
+
+
+    <dependencies>
+
+        <!-- CUSTOM SPRING-BOOT STARTERS -->
+        <dependency>
+            <groupId>com.sap.fsm.springboot.starter</groupId>
+            <artifactId>starter-common</artifactId>
+            <version>${starter-common.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sap.fsm.springboot.starter</groupId>
+            <artifactId>starter-logging</artifactId>
+            <version>${starter-logging.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sap.fsm.springboot.starter</groupId>
+            <artifactId>starter-management</artifactId>
+            <version>${starter-management.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sap.fsm.springboot.starter</groupId>
+            <artifactId>starter-swagger</artifactId>
+            <version>${starter-swagger.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sap.fsm.springboot.starter</groupId>
+                    <artifactId>starter-common</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sap.fsm.springboot.starter</groupId>
+            <artifactId>starter-tracing</artifactId>
+            <version>${starter-tracing.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sap.fsm.springboot.starter</groupId>
+            <artifactId>starter-db</artifactId>
+            <version>${starter-db.version}</version>
+        </dependency>
+
+        <dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>${lombok.version}</version>
+            <scope>provided</scope>
+	    </dependency>
+
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>${modelmapper.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <configuration>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>maven-public</id>
+            <url>https://nexus.ie-1.coreinfra.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-public</id>
+            <url>https://nexus.ie-1.coreinfra.io/repository/maven-public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>

@@ -1,0 +1,73 @@
+# IMPORTANT! tag should be in this form. do not move it left or right otherwise sed on bamboo won't work
+# this will be replaces very soon by maven plugin if exists
+image:
+  pullPolicy: Always
+  registry: registry.dev.coresuite.com
+  name: cloud-microservice-template
+  tag: auto-filled-by-pipeline
+
+docker:
+  minReadySeconds: 120
+  containerPort: 8080
+  pullSecretName: csregistry
+  logs:
+    cluster: et-1
+    enabled: true
+    path: /logs
+    logstashHosts: sh1aelks.dev.coresuite.com,sh2belks.dev.coresuite.com
+
+replicaCount: 1
+
+namespace: default
+
+annotations:
+  prometheus.io/scrape-job: "kubernetes-common-pods"
+  prometheus.io/path: "/cloud-microservice-template/actuator/metrics"
+  prometheus.io/port: "8080"
+
+ingress:
+  enabled: true
+  annotations:
+    "traefik.frontend.rule.type": "PathPrefixStrip"
+    "traefik.frontend.redirect.entryPoint": "https"
+    "nginx.ingress.kubernetes.io/rewrite-target": "/$1"
+  path: 
+   - /(cloud-microservice-template/actuator.*)
+   - /cloud-microservice-template/(.*)
+   - /cloud-microservice-template/
+  hosts:
+    - gw.et-1.coreinfra.io
+    - et.coresystems.net
+
+service:
+  hostname: et-1.coreinfra.io
+  type: ClusterIP
+  port: 80
+
+resources:
+  limits:
+    memory: 500Mi
+    cpu: 1000m
+  requests:
+    memory: 500Mi
+    cpu: 100m
+
+config:
+  application:
+    instance-id: ${HOSTNAME}
+  example: "Example value from config map. Default values"
+  app-config: ${APPLICATION_CONFIG}
+
+  spring:
+    cloud:
+      kubernetes:
+        client:
+          ca-cert-data: "${SERVICE_DISCOVERY_CA_CERT_DATA}"
+          client-cert-data: "${SERVICE_DISCOVERY_CLIENT_CERT_DATA}"
+          client-key-data: "${SERVICE_DISCOVERY_CLIENT_KEY_DATA}"
+          master-url: "${SERVICE_DISCOVERY_URL}"
+
+vault:
+  secrets:
+  - stripe=api_key
+  - service-discovery=url,ca-cert-data,client-cert-data,client-key-data

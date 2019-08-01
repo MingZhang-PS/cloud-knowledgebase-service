@@ -1,0 +1,15 @@
+replicaCount: 1
+
+image:
+  pullPolicy: IfNotPresent
+  tag: 0.5.2
+
+docker:
+  logs:
+    cluster: local
+
+service:
+  hostname: et-1.coreinfra.io
+
+config:
+  example: "Example value from config map. local values"

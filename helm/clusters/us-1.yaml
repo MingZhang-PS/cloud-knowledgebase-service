@@ -1,0 +1,24 @@
+replicaCount: 2
+
+image:
+  tag: 0.5.2
+
+docker:
+  logs:
+    cluster: us-1
+    logstashHosts: sh1aelks.coresuite.com,sh2belks.coresuite.com
+
+ingress:
+  hosts:
+    - gw.us-1.coreinfra.io
+    - ingress.us-1.coreinfra.io
+    - us.coresystems.net
+
+service:
+  hostname: us-1.coreinfra.io
+
+config:
+  example: "Example value from config map. us-1 values"
+  logging:
+    level:
+      org.zalando.logbook.Logbook: DEBUG

@@ -1,0 +1,139 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  {{- include "default_metadata" . | indent 2 }}
+spec:
+  revisionHistoryLimit: 0
+  minReadySeconds: {{ .Values.docker.minReadySeconds }}
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "default_labels" . | indent 6 }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 50%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+      {{- range $key, $value := .Values.annotations }}
+        {{ $key }}: {{ $value | quote }}
+      {{- end }}
+      labels:
+        {{- include "default_labels" . | indent 8 }}
+        version: {{ .Chart.Version }}
+        maintainer_team: "yoda"
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ template "chart.name" . }}
+      initContainers:
+        - name: vault
+          image: {{ .Values.image.registry }}/vault-init-container:0.1.0
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+      {{- range .Values.vault.secrets }}
+          - {{ . }}
+          {{- end}}
+          env:
+          - name: FILENAME
+            value: /secrets/variables.export
+          - name: VAULT_TOKEN
+            value: {{ .Values.vault.token }}
+          - name: VAULT_ADDR
+            value: {{ .Values.vault.addr }}
+          volumeMounts:
+            - mountPath: /secrets
+              name: secrets
+      containers:
+        - name: {{ template "chart.name" . }}
+          image: {{ .Values.image.registry }}/{{ .Values.image.name }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.docker.containerPort }}
+              protocol: TCP
+            - name: jmx
+              containerPort: 7999
+
+          {{- if .Values.resources }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          {{- end }}
+
+          env:
+            - name: APPLICATION_CONFIG
+              value: file:///config/application.yaml
+            - name: EXTRA_ENV_VARIABLES
+              value: /secrets/variables.export
+
+          volumeMounts:
+          {{- if .Values.docker.logs.enabled }}
+            - mountPath: {{ .Values.docker.logs.path }}
+              name: logs
+          {{- end }}
+            - mountPath: /config
+              name: config
+            - mountPath: /secrets
+              name: secrets
+          readinessProbe:
+            httpGet:
+              path: /{{ template "chart.name" . }}/actuator/info
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 1
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /{{ template "chart.name" . }}/actuator/info
+              port: http
+            initialDelaySeconds: {{ .Values.docker.minReadySeconds }}
+            periodSeconds: 20
+            failureThreshold: 3
+            timeoutSeconds: 3
+
+        {{- if .Values.docker.logs.enabled }}
+        - name: filebeat
+          image: {{ .Values.image.registry }}/filebeat:0.5.2
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "20"]
+          env:
+            - name: LOG_DIR
+              value: {{ .Values.docker.logs.path }}
+            - name: LOGSTASH_HOSTS
+              value: {{ .Values.docker.logs.logstashHosts }}
+            - name: CLUSTER
+              value: {{ .Values.docker.logs.cluster }}
+          volumeMounts:
+            - mountPath: {{ .Values.docker.logs.path }}
+              name: logs
+        {{- end }}
+
+      volumes:
+        - name: secrets
+          emptyDir: {}
+        - name: config
+          configMap:
+            name:  {{ template "chart.name" . }}
+      {{- if .Values.docker.logs.enabled }}
+        - name: logs
+          emptyDir: {}
+      {{- end }}
+
+      {{- if .Values.docker.pullSecretName }}
+      imagePullSecrets:
+        - name: {{ .Values.docker.pullSecretName }}
+      {{- end }}

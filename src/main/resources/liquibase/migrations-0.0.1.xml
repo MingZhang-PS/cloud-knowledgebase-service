@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet failOnError="false" id="001_2" author="ming">
+    <preConditions onFail="CONTINUE"
+                   onFailMessage="KnowledgeBaseProviderType table exists. Changeset skipped."> <!-- http://www.liquibase.org/documentation/preconditions.html -->
+      <not>
+        <tableExists tableName="KnowledgeBaseProviderType" schemaName="${database.defaultSchemaName}"/>
+      </not>
+    </preConditions>
+    <comment>Create KnowledgeBaseProviderType table if not exists</comment>
+    <sql>
+      create table ${database.defaultSchemaName}.KnowledgeBaseProviderType
+      ( id uuid not null,
+        lastChanged timestamp, 
+        
+        code varchar(255) not null,
+        name varchar(255),
+        primary key (id));
+
+      insert into ${database.defaultSchemaName}.KnowledgeBaseProviderType(id, lastchanged, code, name) 
+        values ('68d0e024-2bef-43c1-ad3c-00af7e48e9c4', NOW(), 'MindTouch', '');
+
+      insert into ${database.defaultSchemaName}.KnowledgeBaseProviderType(id, lastchanged, code, name) 
+        values ('2234e454-2f12-40d8-a58a-3a5d06ccd8a6', NOW(), 'SAP-Native', '');
+
+      create index knowledgeBaseProviderType_lastChanged_idx on KnowledgeBaseProviderType (lastChanged);
+    </sql>
+  </changeSet>
+
+
+</databaseChangeLog>

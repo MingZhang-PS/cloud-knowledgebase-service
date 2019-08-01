@@ -1,0 +1,20 @@
+replicaCount: 2
+
+image:
+  tag: auto-filled-by-piepline
+
+docker:
+  logs:
+    cluster: sb-1
+
+ingress:
+  hosts:
+    - ingress.sb-1.coreinfra.io
+    - gw.sb-1.coreinfra.io
+    - sb.coresystems.net
+
+service:
+  hostname: sb-1.coreinfra.io
+
+config:
+  example: "Example value from config map. sb-1 values"

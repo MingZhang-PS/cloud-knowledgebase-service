@@ -1,0 +1,18 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch)-KnowledgeBaseApplication<cloud-knowledgebase-service>",
+            "request": "launch",
+            "mainClass": "com.sap.fsm.knowledgebase.KnowledgeBaseApplication",
+            "projectName": "cloud-knowledgebase-service",
+            "args": "--spring.profiles.active=local",     // <-- Choice 1. via commandline  args
+            "vmArgs": "-Dspring.profiles.active=local"  // <-- Choice 2.  via a java system property
+
+        }
+    ]
+}

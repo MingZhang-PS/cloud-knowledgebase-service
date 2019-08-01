@@ -1,0 +1,33 @@
+application:
+  version: @project.version@
+  name: cloud-knowledgebase-service
+  instance-id: ${random.uuid}
+
+server:
+  port: 8080
+
+logging:
+  level:
+#    org.springframework.core.env.PropertySourcesPropertyResolver: TRACE
+
+
+starter-db:
+  multitenancy: NONE
+
+---
+# common properties, that cannot be extracted to custom starter as they will not be overridden
+# when anybody change any property in this section it should be propagated to other services until we find cleaner solution
+spring:
+  application:
+    name: ${application.name}
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      group-id: test-group-id
+  cloud:
+    kubernetes:
+      config:
+        enabled: false
+      client:
+        namespace: default
+        master-url: https://api.et-1.coreinfra.io

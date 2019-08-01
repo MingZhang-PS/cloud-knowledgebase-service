@@ -1,0 +1,20 @@
+replicaCount: 2
+
+image:
+  tag: auto-filled-by-piepline
+
+docker:
+  logs:
+    cluster: dt-1
+
+ingress:
+  hosts:
+    - ingress.dt-1.coreinfra.io
+    - gw.dt-1.coreinfra.io
+    - dt.coresystems.net
+
+service:
+  hostname: dt-1.coreinfra.io
+
+config:
+  example: "Example value from config map. dt-1 values"

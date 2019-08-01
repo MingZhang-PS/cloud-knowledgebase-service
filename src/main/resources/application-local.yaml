@@ -1,0 +1,13 @@
+application:
+  version: @project.version@
+  name: cloud-knowledgebase-service
+  instance-id: ${random.uuid}
+
+spring:
+  datasource:
+    hikari:
+      data-source-properties:
+        ssl: false
+
+server:
+  port: 8081

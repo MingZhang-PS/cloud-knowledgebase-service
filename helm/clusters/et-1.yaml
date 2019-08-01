@@ -1,0 +1,20 @@
+replicaCount: 2
+
+image:
+  tag: auto-filled-by-piepline
+
+docker:
+  logs:
+    cluster: et-1
+
+ingress:
+  hosts:
+    - gw.et-1.coreinfra.io
+    - et.coresystems.net
+    - ingress.et-1.coreinfra.io
+
+service:
+  hostname: et-1.coreinfra.io
+
+config:
+  example: "New value from config map -- testing upgrades. et-1 values "

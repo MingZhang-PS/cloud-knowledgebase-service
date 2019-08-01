@@ -1,0 +1,8 @@
+apiVersion: v1
+appVersion: "0.1.0"
+description: A Java based microservice template for showcase purpose.
+name: cloud-microservice-template
+version: 0.1.0
+maintainers:
+  - name: Piotr Joński
+    email: p.jonski@pojo.pl

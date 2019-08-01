@@ -1,0 +1,7 @@
+application:
+  name: cloud-knowledgebase-service
+  instance-id: ${random.uuid}
+
+spring:
+  application:
+    name: ${application.name}
