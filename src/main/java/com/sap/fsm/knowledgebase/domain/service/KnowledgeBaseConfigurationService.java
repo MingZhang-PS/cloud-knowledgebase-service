@@ -34,9 +34,9 @@ public class KnowledgeBaseConfigurationService {
 
     @Transactional
     public KnowledgeBaseProviderTypeDto createKnowledgeBaseProviderType(KnowledgeBaseProviderTypeDto requestDto) {
-        List<KnowledgeBaseProviderType> providerTypeWithSameCode = knowledgeBaseProviderTypeRepository
+        List<KnowledgeBaseProviderType> findResults = knowledgeBaseProviderTypeRepository
                 .findByCode(requestDto.getCode());
-        if (providerTypeWithSameCode != null && !providerTypeWithSameCode.isEmpty()) {
+        if (findResults != null && !findResults.isEmpty()) {
             throw new ProviderTypeCodePresentException(String.format(
                     "ProviderType already present for code: %s, please use new code to create", requestDto.getCode()));
         }
@@ -57,18 +57,24 @@ public class KnowledgeBaseConfigurationService {
     public Page<KnowledgeBaseProviderTypeDto> findByKnowledgeBaseProviderTypes(Pageable pageable) {
         logger.info(" page = " + pageable.getPageNumber() + " pageSize = " + pageable.getPageSize());
         Page<KnowledgeBaseProviderTypeDto> providerTypes = knowledgeBaseProviderTypeRepository.findAll(pageable)
-                                                            .map(item -> {
-                                                              return modelMapper.map(item, KnowledgeBaseProviderTypeDto.class);  
-                                                            });
-       
+                .map(item -> {
+                    return modelMapper.map(item, KnowledgeBaseProviderTypeDto.class);
+                });
+
         return providerTypes;
     }
 
     @Transactional
-    public KnowledgeBaseProviderTypeDto updateByKnowledgeBaseProviderTypeId(UUID id, KnowledgeBaseProviderTypeDto requestDto) {
-        final KnowledgeBaseProviderType providerType = modelMapper.map(requestDto, KnowledgeBaseProviderType.class);
-        providerType.setId(id);
-        final KnowledgeBaseProviderType savedProviderType = knowledgeBaseProviderTypeRepository.save(providerType);
-        return modelMapper.map(savedProviderType, KnowledgeBaseProviderTypeDto.class);    
+    public KnowledgeBaseProviderTypeDto updateByKnowledgeBaseProviderTypeId(UUID id,
+            KnowledgeBaseProviderTypeDto requestDto) {
+        Optional<KnowledgeBaseProviderType> findResult = knowledgeBaseProviderTypeRepository.findById(id);
+        if (findResult.isPresent()) {
+            KnowledgeBaseProviderType providerType = findResult.get();
+            providerType.setName(requestDto.getName()); // only allow to change name
+            // final KnowledgeBaseProviderType savedProviderType =
+            // knowledgeBaseProviderTypeRepository.save(providerType);
+            return modelMapper.map(providerType, KnowledgeBaseProviderTypeDto.class);
+        }
+        return null;
     }
 }

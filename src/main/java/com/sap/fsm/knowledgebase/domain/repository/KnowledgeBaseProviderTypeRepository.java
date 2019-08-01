@@ -11,11 +11,8 @@ import java.util.UUID;
 import java.util.List;
 
 @Repository
-public interface KnowledgeBaseProviderTypeRepository
-        extends JpaRepository<KnowledgeBaseProviderType, UUID> {
-
+public interface KnowledgeBaseProviderTypeRepository extends JpaRepository<KnowledgeBaseProviderType, UUID> {
         List<KnowledgeBaseProviderType> findByCode(String code);
 
         Page<KnowledgeBaseProviderType> findAll(Pageable pageable);
-
 }

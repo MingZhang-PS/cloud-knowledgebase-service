@@ -32,7 +32,8 @@ public class KnowledgeBaseConfigurationApi {
     // TODO: No authorization support
     public ResponseEntity<KnowledgeBaseProviderTypeDto> createKnowledgeBaseProviderType(
             @ApiParam(required = true) @RequestBody KnowledgeBaseProviderTypeDto requestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(knowledgeBaseConfigurationService.createKnowledgeBaseProviderType(requestDto));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(knowledgeBaseConfigurationService.createKnowledgeBaseProviderType(requestDto));
     }
 
     @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME)
@@ -40,13 +41,14 @@ public class KnowledgeBaseConfigurationApi {
     public ResponseEntity<Page<KnowledgeBaseProviderTypeDto>> findByKnowledgeBaseProviderTypes(Pageable pageable) {
         return ResponseEntity.ok(knowledgeBaseConfigurationService.findByKnowledgeBaseProviderTypes(pageable));
     }
-    
+
     @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME + "/{id}")
     @ApiOperation(value = "Get a knowledgebase provider type by id")
     public ResponseEntity<KnowledgeBaseProviderTypeDto> findByKnowledgeBaseProviderTypeId(
-        @ApiParam(value = "Unique identifier of a Provider Type", required = true) @PathVariable UUID id) {
-        KnowledgeBaseProviderTypeDto providerType = knowledgeBaseConfigurationService.findByKnowledgeBaseProviderTypeId(id);
-        if(providerType != null) {
+            @ApiParam(value = "Unique identifier of a Provider Type", required = true) @PathVariable UUID id) {
+        KnowledgeBaseProviderTypeDto providerType = knowledgeBaseConfigurationService
+                .findByKnowledgeBaseProviderTypeId(id);
+        if (providerType != null) {
             return ResponseEntity.ok(providerType);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -54,9 +56,14 @@ public class KnowledgeBaseConfigurationApi {
 
     @PutMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME + "/{id}")
     @ApiOperation(value = "Update a knowledgebase provider type by id")
-    public ResponseEntity<KnowledgeBaseProviderTypeDto> updateByKnowledgeBaseProviderTypeId(@PathVariable UUID id, 
-    @RequestBody KnowledgeBaseProviderTypeDto requestDto) {
-        return ResponseEntity.ok(knowledgeBaseConfigurationService.updateByKnowledgeBaseProviderTypeId(id, requestDto));
-
+    public ResponseEntity<KnowledgeBaseProviderTypeDto> updateByKnowledgeBaseProviderTypeId(
+            @ApiParam(value = "Unique identifier of a Provider Type", required = true) @PathVariable UUID id,
+            @ApiParam(required = true) @RequestBody KnowledgeBaseProviderTypeDto requestDto) {
+        KnowledgeBaseProviderTypeDto providerType = knowledgeBaseConfigurationService
+                .updateByKnowledgeBaseProviderTypeId(id, requestDto);
+        if (providerType != null) {
+            return ResponseEntity.ok(providerType);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 }
