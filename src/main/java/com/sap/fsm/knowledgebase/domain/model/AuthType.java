@@ -7,9 +7,9 @@ import io.swagger.annotations.ApiModelProperty;
 public enum AuthType {
     
     @ApiModelProperty(value = "No authentication")
-    NoAuthentication,
+    NOAUTHENTICATION,
     @ApiModelProperty(value = "Basic authentication")
-    Basic,
+    BASIC,
     @ApiModelProperty(value = "OAuth2 Client Credentials")
-    OAuth2ClientCredentials
+    OAUTH2CLIENTCREDENTIALS
 }
