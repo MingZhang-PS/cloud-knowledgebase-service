@@ -22,7 +22,7 @@ import java.util.UUID;
         MediaType.APPLICATION_JSON_VALUE }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 @Validated
 public class KnowledgeBaseConfigurationApi {
-    private static final String PROVIDER_TYPE_RESOURCE_URL_NAME = "providerType";
+    private static final String PROVIDER_TYPE_RESOURCE_URL_NAME = "provider-types";
 
     @Autowired
     private KnowledgeBaseConfigurationService knowledgeBaseConfigurationService;
@@ -39,7 +39,7 @@ public class KnowledgeBaseConfigurationApi {
     @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME)
     @ApiOperation(value = "Get all knowledgebase provider type")
     public ResponseEntity<Page<KnowledgeBaseProviderTypeDto>> findByKnowledgeBaseProviderTypes(Pageable pageable) {
-        return ResponseEntity.ok(knowledgeBaseConfigurationService.findByKnowledgeBaseProviderTypes(pageable));
+        return ResponseEntity.ok(knowledgeBaseConfigurationService.findKnowledgeBaseProviderTypes(pageable));
     }
 
     @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME + "/{id}")

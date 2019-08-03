@@ -1,4 +1,4 @@
-package com.sap.fsm.knowledgebase.domain.exceptions;
+package com.sap.fsm.knowledgebase.domain.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

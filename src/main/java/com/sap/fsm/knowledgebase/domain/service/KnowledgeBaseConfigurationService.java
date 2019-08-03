@@ -3,7 +3,7 @@ package com.sap.fsm.knowledgebase.domain.service;
 import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseProviderTypeDto;
 import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseProviderType;
 import com.sap.fsm.knowledgebase.domain.repository.KnowledgeBaseProviderTypeRepository;
-import com.sap.fsm.knowledgebase.domain.exceptions.*;
+import com.sap.fsm.knowledgebase.domain.exception.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,7 +54,7 @@ public class KnowledgeBaseConfigurationService {
         return null;
     }
 
-    public Page<KnowledgeBaseProviderTypeDto> findByKnowledgeBaseProviderTypes(Pageable pageable) {
+    public Page<KnowledgeBaseProviderTypeDto> findKnowledgeBaseProviderTypes(Pageable pageable) {
         logger.info(" page = " + pageable.getPageNumber() + " pageSize = " + pageable.getPageSize());
         Page<KnowledgeBaseProviderTypeDto> providerTypes = knowledgeBaseProviderTypeRepository.findAll(pageable)
                 .map(item -> {
