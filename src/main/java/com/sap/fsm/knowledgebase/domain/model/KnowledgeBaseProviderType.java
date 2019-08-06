@@ -9,7 +9,9 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+
+import java.util.UUID;
+import java.util.Date;
 
 @Entity
 @Table(name = "knowledgebaseprovidertype")

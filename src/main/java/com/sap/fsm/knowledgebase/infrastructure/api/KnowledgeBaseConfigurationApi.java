@@ -1,15 +1,13 @@
 package com.sap.fsm.knowledgebase.infrastructure.api;
 
 import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseProviderTypeDto;
+import com.sap.fsm.knowledgebase.domain.dto.PaginationRecords;
 import com.sap.fsm.knowledgebase.domain.service.KnowledgeBaseConfigurationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import io.swagger.annotations.*;
@@ -20,50 +18,46 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "/api/knowledge-base/v1/", consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE,
         MediaType.APPLICATION_JSON_VALUE }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-@Validated
 public class KnowledgeBaseConfigurationApi {
     private static final String PROVIDER_TYPE_RESOURCE_URL_NAME = "provider-types";
 
     @Autowired
     private KnowledgeBaseConfigurationService knowledgeBaseConfigurationService;
 
-    @PostMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME)
     @ApiOperation(value = "Create a knowledgebase provider type")
-    // TODO: No authorization support
-    public ResponseEntity<KnowledgeBaseProviderTypeDto> createKnowledgeBaseProviderType(
-            @ApiParam(required = true) @RequestBody KnowledgeBaseProviderTypeDto requestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(knowledgeBaseConfigurationService.createKnowledgeBaseProviderType(requestDto));
+    @ApiImplicitParam(name = "requestDto", value = "KnowledgeBase Provider Type Entity", required = true, dataType = "KnowledgeBaseProviderTypeDto", paramType = "body")
+    @PostMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME)
+    @ResponseBody
+    public KnowledgeBaseProviderTypeDto createKnowledgeBaseProviderType(
+            @Validated @RequestBody KnowledgeBaseProviderTypeDto requestDto) {
+        return knowledgeBaseConfigurationService.createKnowledgeBaseProviderType(requestDto);
     }
 
-    @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME)
     @ApiOperation(value = "Get all knowledgebase provider type")
-    public ResponseEntity<Page<KnowledgeBaseProviderTypeDto>> findByKnowledgeBaseProviderTypes(Pageable pageable) {
-        return ResponseEntity.ok(knowledgeBaseConfigurationService.findKnowledgeBaseProviderTypes(pageable));
+    @ApiImplicitParam(name = "pageable", value = "Pagination", required = false, dataType = "Pageable", paramType = "query")
+    @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME)
+    @ResponseBody
+    public PaginationRecords<KnowledgeBaseProviderTypeDto> findByKnowledgeBaseProviderTypes(Pageable pageable) {
+        return knowledgeBaseConfigurationService.findKnowledgeBaseProviderTypes(pageable);
     }
 
-    @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME + "/{id}")
     @ApiOperation(value = "Get a knowledgebase provider type by id")
-    public ResponseEntity<KnowledgeBaseProviderTypeDto> findByKnowledgeBaseProviderTypeId(
-            @ApiParam(value = "Unique identifier of a Provider Type", required = true) @PathVariable UUID id) {
-        KnowledgeBaseProviderTypeDto providerType = knowledgeBaseConfigurationService
-                .findByKnowledgeBaseProviderTypeId(id);
-        if (providerType != null) {
-            return ResponseEntity.ok(providerType);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    @ApiImplicitParam(name = "id", value = "Unique identifier of a Provider Type", required = true, dataType = "UUID", paramType = "path")
+    @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME + "/{id}")
+    @ResponseBody
+    public KnowledgeBaseProviderTypeDto findByKnowledgeBaseProviderTypeId(@PathVariable UUID id) {
+        return knowledgeBaseConfigurationService.findByKnowledgeBaseProviderTypeId(id);
     }
 
-    @PutMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME + "/{id}")
     @ApiOperation(value = "Update a knowledgebase provider type by id")
-    public ResponseEntity<KnowledgeBaseProviderTypeDto> updateByKnowledgeBaseProviderTypeId(
-            @ApiParam(value = "Unique identifier of a Provider Type", required = true) @PathVariable UUID id,
-            @ApiParam(required = true) @RequestBody KnowledgeBaseProviderTypeDto requestDto) {
-        KnowledgeBaseProviderTypeDto providerType = knowledgeBaseConfigurationService
-                .updateByKnowledgeBaseProviderTypeId(id, requestDto);
-        if (providerType != null) {
-            return ResponseEntity.ok(providerType);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "id", value = "Unique identifier of a Provider Type", required = true, dataType = "UUID", paramType = "path"),
+        @ApiImplicitParam(name = "requestDto", value = "KnowledgeBase Provider Type Entity", required = true, dataType = "KnowledgeBaseProviderTypeDto", paramType = "body") })
+    @PutMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME + "/{id}")
+    @ResponseBody
+    public KnowledgeBaseProviderTypeDto updateByKnowledgeBaseProviderTypeId(
+           @PathVariable UUID id,
+           @Validated @RequestBody KnowledgeBaseProviderTypeDto requestDto) {
+        return knowledgeBaseConfigurationService.updateByKnowledgeBaseProviderTypeId(id, requestDto);
     }
 }
