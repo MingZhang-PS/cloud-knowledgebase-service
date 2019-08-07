@@ -1,13 +1,13 @@
 package com.sap.fsm.knowledgebase.domain.dto;
 
-import lombok.Getter;
+import lombok.Data;
 
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-@Getter
-public class PaginationRecords<T> {
+@Data
+public class PaginationRecord<T> {
     private List<T> results;
     private int size;
     private int number;
@@ -17,7 +17,7 @@ public class PaginationRecords<T> {
     private Long totalElements;
     private int totalPages;
 
-    public PaginationRecords(Page<T> pageRecords) {
+    public PaginationRecord(Page<T> pageRecords) {
         this.results = pageRecords.getContent();
         this.size = pageRecords.getSize();
         this.number = pageRecords.getNumber();

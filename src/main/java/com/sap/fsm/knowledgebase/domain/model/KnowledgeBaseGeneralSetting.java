@@ -14,10 +14,10 @@ import java.util.UUID;
 import java.util.Date;
 
 @Entity
-@Table(name = "knowledgebaseprovidertype")
+@Table(name = "knowledgebasegeneralsetting")
 @Valid
 @Data
-public class KnowledgeBaseProviderType {
+public class KnowledgeBaseGeneralSetting {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid2")
@@ -33,11 +33,11 @@ public class KnowledgeBaseProviderType {
     @NotBlank
     @Column(nullable = false, updatable = false)
     @Length(max = 512)
-    private String code;
+    private String key;
 
     @Column
     @Length(max = 512)
-    private String name;
+    private String value;
 
     @PrePersist
     @PreUpdate

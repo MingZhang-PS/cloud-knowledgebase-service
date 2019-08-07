@@ -5,6 +5,34 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
+  <changeSet failOnError="false" id="001_1" author="ming">
+    <preConditions onFail="CONTINUE"
+                   onFailMessage="KnowledgeBaseGeneralSetting table exists. Changeset skipped."> <!-- http://www.liquibase.org/documentation/preconditions.html -->
+      <not>
+        <tableExists tableName="KnowledgeBaseGeneralSetting" schemaName="${database.defaultSchemaName}"/>
+      </not>
+    </preConditions>
+    <comment>Create KnowledgeBaseGeneralSetting table if not exists</comment>
+    <sql>
+      create table ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting
+      ( id uuid not null,
+        lastChanged timestamp, 
+        
+        key varchar(255) not null,
+        value varchar(255),
+        primary key (id));
+      
+      insert into ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting(id, lastchanged, key, value) 
+        values ('1485ee85-2e04-4110-bf83-6d7281722bef', NOW(), 'enabled', '');
+
+      insert into ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting(id, lastchanged, key, value) 
+        values ('944ccdc5-38a4-4dbc-93c1-d6b3e05f3f8d', NOW(), 'activeProvider', '');
+
+      alter table if exists ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting
+            add constraint key_idx unique (key);
+    </sql>
+  </changeSet>
+
   <changeSet failOnError="false" id="001_2" author="ming">
     <preConditions onFail="CONTINUE"
                    onFailMessage="KnowledgeBaseProviderType table exists. Changeset skipped."> <!-- http://www.liquibase.org/documentation/preconditions.html -->
@@ -28,9 +56,62 @@
       insert into ${database.defaultSchemaName}.KnowledgeBaseProviderType(id, lastchanged, code, name) 
         values ('2234e454-2f12-40d8-a58a-3a5d06ccd8a6', NOW(), 'SAP-Native', '');
 
-      create index knowledgeBaseProviderType_lastChanged_idx on KnowledgeBaseProviderType (lastChanged);
+      alter table if exists ${database.defaultSchemaName}.KnowledgeBaseProviderType
+            add constraint code_idx unique (code);
     </sql>
   </changeSet>
-
-
+  <changeSet id="001_3" author="ming">
+    <createProcedure>
+      create or replace function check_del_general_setting() returns trigger
+      LANGUAGE plpgsql
+      AS $$
+        begin            
+          if old.key = 'enabled' or old.key = 'activeProvider' then
+            raise exception 'cannot delete default general setting';
+          end if;
+        end;
+      $$;
+    </createProcedure>
+    <rollback>
+        drop function check_del_general_setting();
+    </rollback>
+  </changeSet>
+  <changeSet id="001_4" author="ming">
+    <createProcedure>
+      create or replace function check_del_provider_type() returns trigger
+      LANGUAGE plpgsql
+      AS $$
+        begin            
+          if old.code = 'MindTouch' or old.code = 'SAP-Native' then
+            raise exception 'cannot delete default provider types';
+          end if;
+        end;
+      $$;
+    </createProcedure>
+    <rollback>
+        drop function check_del_provider_type();
+    </rollback>
+  </changeSet>
+  <changeSet id="001_5" author="ming">
+    <comment>Create trigger to avoid default general settings be deleted</comment>
+    <sql>
+      drop trigger if exists del_general_setting_trigger on ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting;
+      create trigger del_general_setting_trigger before delete on ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting
+        for each row execute procedure check_del_general_setting();
+    </sql>
+    <rollback>
+      drop trigger del_general_setting_trigger on ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting;
+    </rollback>
+  </changeSet>
+  <changeSet id="001_6" author="ming">
+    <comment>Create trigger to avoid default provider types be deleted</comment>
+    <sql>
+      drop trigger if exists del_provider_type_trigger on ${database.defaultSchemaName}.KnowledgeBaseProviderType;
+      create trigger del_provider_type_trigger before delete on ${database.defaultSchemaName}.KnowledgeBaseProviderType
+        for each row execute procedure check_del_provider_type();
+    </sql>
+    <rollback>
+      drop trigger del_provider_type_trigger on ${database.defaultSchemaName}.KnowledgeBaseProviderType;
+    </rollback>
+  </changeSet>        
 </databaseChangeLog>

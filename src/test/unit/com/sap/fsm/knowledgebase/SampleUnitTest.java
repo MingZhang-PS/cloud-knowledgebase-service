@@ -1,4 +1,4 @@
-package com.sap.fsm;
+package com.sap.fsm.knowledgebase;
 
 import com.sap.fsm.springboot.starter.test.annotation.Unit;
 import org.junit.jupiter.api.Test;

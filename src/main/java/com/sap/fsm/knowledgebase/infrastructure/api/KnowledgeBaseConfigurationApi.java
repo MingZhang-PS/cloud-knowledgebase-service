@@ -1,7 +1,7 @@
 package com.sap.fsm.knowledgebase.infrastructure.api;
 
 import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseProviderTypeDto;
-import com.sap.fsm.knowledgebase.domain.dto.PaginationRecords;
+import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
 import com.sap.fsm.knowledgebase.domain.service.KnowledgeBaseConfigurationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class KnowledgeBaseConfigurationApi {
     @ApiImplicitParam(name = "pageable", value = "Pagination", required = false, dataType = "Pageable", paramType = "query")
     @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME)
     @ResponseBody
-    public PaginationRecords<KnowledgeBaseProviderTypeDto> findByKnowledgeBaseProviderTypes(Pageable pageable) {
+    public PaginationRecord<KnowledgeBaseProviderTypeDto> findByKnowledgeBaseProviderTypes(Pageable pageable) {
         return knowledgeBaseConfigurationService.findKnowledgeBaseProviderTypes(pageable);
     }
 

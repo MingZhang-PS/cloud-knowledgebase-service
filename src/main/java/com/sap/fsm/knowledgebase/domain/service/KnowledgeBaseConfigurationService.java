@@ -1,7 +1,7 @@
 package com.sap.fsm.knowledgebase.domain.service;
 
 import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseProviderTypeDto;
-import com.sap.fsm.knowledgebase.domain.dto.PaginationRecords;
+import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
 import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseProviderType;
 import com.sap.fsm.knowledgebase.domain.repository.KnowledgeBaseProviderTypeRepository;
 import com.sap.fsm.knowledgebase.domain.exception.*;
@@ -64,12 +64,11 @@ public class KnowledgeBaseConfigurationService {
         return modelMapper.map(findResult.get(), KnowledgeBaseProviderTypeDto.class);
     }
 
-    public PaginationRecords<KnowledgeBaseProviderTypeDto> findKnowledgeBaseProviderTypes(Pageable pageable) {
-        Page<KnowledgeBaseProviderTypeDto> providerTypes = knowledgeBaseProviderTypeRepository.findAll(pageable)
+    public PaginationRecord<KnowledgeBaseProviderTypeDto> findKnowledgeBaseProviderTypes(Pageable pageable) {
+        Page<KnowledgeBaseProviderTypeDto> findResults = knowledgeBaseProviderTypeRepository.findAll(pageable)
                 .map(item -> {
                     return modelMapper.map(item, KnowledgeBaseProviderTypeDto.class);
                 });
-
-        return new PaginationRecords<KnowledgeBaseProviderTypeDto>(providerTypes);
+        return new PaginationRecord<KnowledgeBaseProviderTypeDto>(findResults);
     }
 }
