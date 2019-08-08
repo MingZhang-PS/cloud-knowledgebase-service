@@ -4,8 +4,8 @@ import com.sap.fsm.knowledgebase.domain.repository.KnowledgeBaseProviderTypeRepo
 import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseProviderType;
 import com.sap.fsm.springboot.starter.test.annotation.Integration;
 import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseProviderTypeDto;
-import com.sap.fsm.knowledgebase.domain.exception.ProviderTypeCodePresentException;
-import com.sap.fsm.knowledgebase.domain.exception.ProviderTypeNotExistException;
+import com.sap.fsm.knowledgebase.domain.exception.ProviderTypePresentException;
+import com.sap.fsm.knowledgebase.domain.exception.ResourceNotExistException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -168,9 +168,8 @@ class KnowledgeBaseConfigurationApiTest {
     @Test
     public void createProviderTypePresent() throws Exception {
         // given
-        List<KnowledgeBaseProviderType> list = new ArrayList<KnowledgeBaseProviderType>();
-        list.add(providerType);
-        given(mockRepository.findByCode(providerType.getCode())).willReturn(list);
+
+        given(mockRepository.findByCode(providerType.getCode())).willReturn(Optional.of(providerType));
 
         // when
         ResultActions result = mockMvc
@@ -180,7 +179,7 @@ class KnowledgeBaseConfigurationApiTest {
         // then
         result.andDo(print()).andExpect(status().isConflict())
         .andExpect(jsonPath("$.status", is(409)))
-        .andExpect(jsonPath("$.title", is(new ProviderTypeCodePresentException(providerType.getCode()).getReason())));
+        .andExpect(jsonPath("$.title", is(new ProviderTypePresentException(providerType.getCode()).getReason())));
 
         verify(mockRepository, times(0)).save(any());
     }
@@ -189,7 +188,7 @@ class KnowledgeBaseConfigurationApiTest {
     @Test
     public void createProviderTypeSuccessfully() throws Exception {
         // given
-        given(mockRepository.findByCode(providerType.getCode())).willReturn(new ArrayList<KnowledgeBaseProviderType>());
+        given(mockRepository.findByCode(providerType.getCode())).willReturn(Optional.empty());
         given(mockRepository.save(any(KnowledgeBaseProviderType.class))).willReturn(providerType);
 
         // when
@@ -218,7 +217,7 @@ class KnowledgeBaseConfigurationApiTest {
         // then
         result.andDo(print()).andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status", is(404)))
-        .andExpect(jsonPath("$.title", is(new ProviderTypeNotExistException(providerType.getId()).getReason())));
+        .andExpect(jsonPath("$.title", is(new ResourceNotExistException(providerType.getId()).getReason())));
 
         verify(mockRepository, times(0)).save(any());
     }

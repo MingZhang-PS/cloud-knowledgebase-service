@@ -1,6 +1,6 @@
 package com.sap.fsm.knowledgebase.domain.exception.handler;
 
-import com.sap.fsm.knowledgebase.domain.exception.ProviderTypeCodePresentException;
+import com.sap.fsm.knowledgebase.domain.exception.ProviderTypePresentException;
 import com.sap.fsm.knowledgebase.domain.exception.response.ErrorResponse;
 import com.sap.fsm.springboot.starter.test.annotation.Unit;
 
@@ -24,9 +24,9 @@ class GlobalExceptionHandlerTest {
 
     @DisplayName("test provider type code present exception handled properly")
     @Test
-    void shouldHandleProviderTypeCodePresentExceptionProperly() {
+    void shouldHandleProviderTypePresentExceptionProperly() {
         // given
-        ProviderTypeCodePresentException ex = new ProviderTypeCodePresentException("MindTouch");
+        ProviderTypePresentException ex = new ProviderTypePresentException("MindTouch");
 
         // when
         ResponseEntity<Object> resp = globalExceptionHandler.handleBusinessException(ex);

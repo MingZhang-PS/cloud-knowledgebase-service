@@ -2,14 +2,13 @@ package com.sap.fsm.knowledgebase.infrastructure.api;
 
 import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseProviderTypeDto;
 import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
-import com.sap.fsm.knowledgebase.domain.service.KnowledgeBaseConfigurationService;
+import com.sap.fsm.knowledgebase.domain.service.KnowledgeBaseProviderTypeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.http.MediaType;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import io.swagger.annotations.*;
 
@@ -23,7 +22,7 @@ public class KnowledgeBaseConfigurationApi {
     private static final String PROVIDER_TYPE_RESOURCE_URL_NAME = "provider-types";
 
     @Autowired
-    private KnowledgeBaseConfigurationService knowledgeBaseConfigurationService;
+    private KnowledgeBaseProviderTypeService knowledgeBaseProviderTypeService;
 
     @ApiOperation(value = "Create a knowledgebase provider type")
     @ApiImplicitParam(name = "requestDto", value = "KnowledgeBase Provider Type Entity", required = true, dataType = "KnowledgeBaseProviderTypeDto", paramType = "body")
@@ -31,7 +30,7 @@ public class KnowledgeBaseConfigurationApi {
     @ResponseBody
     public KnowledgeBaseProviderTypeDto createKnowledgeBaseProviderType(
             @Validated @RequestBody KnowledgeBaseProviderTypeDto requestDto) {
-        return knowledgeBaseConfigurationService.createKnowledgeBaseProviderType(requestDto);
+        return knowledgeBaseProviderTypeService.createKnowledgeBaseProviderType(requestDto);
     }
 
     @ApiOperation(value = "Get all knowledgebase provider type")
@@ -41,7 +40,7 @@ public class KnowledgeBaseConfigurationApi {
     @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME, consumes = MediaType.ALL_VALUE)
     @ResponseBody
     public PaginationRecord<KnowledgeBaseProviderTypeDto> findByKnowledgeBaseProviderTypes(@RequestParam int page, @RequestParam int size) {
-        return knowledgeBaseConfigurationService.findKnowledgeBaseProviderTypes(PageRequest.of(page, size));
+        return knowledgeBaseProviderTypeService.findKnowledgeBaseProviderTypes(PageRequest.of(page, size));
     }
 
     @ApiOperation(value = "Get a knowledgebase provider type by id")
@@ -49,7 +48,7 @@ public class KnowledgeBaseConfigurationApi {
     @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME + "/{id}", consumes = MediaType.ALL_VALUE)
     @ResponseBody
     public KnowledgeBaseProviderTypeDto findByKnowledgeBaseProviderTypeId(@PathVariable UUID id) {
-        return knowledgeBaseConfigurationService.findByKnowledgeBaseProviderTypeId(id);
+        return knowledgeBaseProviderTypeService.findByKnowledgeBaseProviderTypeId(id);
     }
 
     @ApiOperation(value = "Update a knowledgebase provider type by id")
@@ -61,6 +60,6 @@ public class KnowledgeBaseConfigurationApi {
     public KnowledgeBaseProviderTypeDto updateByKnowledgeBaseProviderTypeId(
            @PathVariable UUID id,
            @Validated @RequestBody KnowledgeBaseProviderTypeDto requestDto) {
-        return knowledgeBaseConfigurationService.updateByKnowledgeBaseProviderTypeId(id, requestDto);
+        return knowledgeBaseProviderTypeService.updateByKnowledgeBaseProviderTypeId(id, requestDto);
     }
 }

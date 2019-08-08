@@ -3,8 +3,8 @@ package com.sap.fsm.knowledgebase.domain.service;
 import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseProviderTypeDto;
 import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseProviderType;
 import com.sap.fsm.knowledgebase.domain.repository.KnowledgeBaseProviderTypeRepository;
-import com.sap.fsm.knowledgebase.domain.exception.ProviderTypeNotExistException;
-import com.sap.fsm.knowledgebase.domain.exception.ProviderTypeCodePresentException;
+import com.sap.fsm.knowledgebase.domain.exception.ResourceNotExistException;
+import com.sap.fsm.knowledgebase.domain.exception.ProviderTypePresentException;
 import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
 import com.sap.fsm.springboot.starter.test.annotation.Unit;
 
@@ -36,7 +36,7 @@ import java.util.Date;
 import java.util.List;
 
 @Unit
-public class KnowledgeBaseConfigurationServiceTest {
+public class KnowledgeBaseProviderTypeServiceTest {
     @Mock
     private ModelMapper modelMapper;
 
@@ -44,7 +44,7 @@ public class KnowledgeBaseConfigurationServiceTest {
     private KnowledgeBaseProviderTypeRepository knowledgeBaseProviderTypeRepository;
 
     @InjectMocks
-    private KnowledgeBaseConfigurationService knowledgeBaseConfigurationService;
+    private KnowledgeBaseProviderTypeService knowledgeBaseProviderTypeService;
 
     private static KnowledgeBaseProviderType fakeType;
     private static KnowledgeBaseProviderTypeDto requestDto;
@@ -73,7 +73,7 @@ public class KnowledgeBaseConfigurationServiceTest {
         requestDto.setLastChanged(fakeType.getLastChanged());
     }
 
-    @DisplayName("Test knowledgeBaseConfigurationService get provider type by id successfully")
+    @DisplayName("Test knowledgeBaseProviderTypeService get provider type by id successfully")
     @Test
     void shouldGetProviderTypeByIdSuccessfully() {
         // given
@@ -81,7 +81,7 @@ public class KnowledgeBaseConfigurationServiceTest {
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
         // when
-        KnowledgeBaseProviderTypeDto findResult = knowledgeBaseConfigurationService
+        KnowledgeBaseProviderTypeDto findResult = knowledgeBaseProviderTypeService
                 .findByKnowledgeBaseProviderTypeId(someId);
 
         // then
@@ -90,16 +90,16 @@ public class KnowledgeBaseConfigurationServiceTest {
         assertEquals(fakeType.getName(), findResult.getName());
     }
 
-    @DisplayName("Test knowledgeBaseConfigurationService get provider type by id fails due to resource not found")
+    @DisplayName("Test knowledgeBaseProviderTypeService get provider type by id fails due to resource not found")
     @Test
     void shouldGetProviderTypeByIdNotFound() {
         given(knowledgeBaseProviderTypeRepository.findById(someId)).willReturn(Optional.empty());
-        Assertions.assertThrows(ProviderTypeNotExistException.class, () -> {
-            knowledgeBaseConfigurationService.findByKnowledgeBaseProviderTypeId(someId);
+        Assertions.assertThrows(ResourceNotExistException.class, () -> {
+            knowledgeBaseProviderTypeService.findByKnowledgeBaseProviderTypeId(someId);
         });
     }
 
-    @DisplayName("Test knowledgeBaseConfigurationService update provider type successfully")
+    @DisplayName("Test knowledgeBaseProviderTypeService update provider type successfully")
     @Test
     void shouldUpdateProviderTypeSuccessfully() {
         // given  
@@ -109,7 +109,7 @@ public class KnowledgeBaseConfigurationServiceTest {
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
         // when
-        KnowledgeBaseProviderTypeDto updateResult = knowledgeBaseConfigurationService
+        KnowledgeBaseProviderTypeDto updateResult = knowledgeBaseProviderTypeService
                 .updateByKnowledgeBaseProviderTypeId(someId, requestDto);
 
         // then
@@ -118,27 +118,27 @@ public class KnowledgeBaseConfigurationServiceTest {
         assertEquals(fakeType.getId(), updateResult.getId());
     }
 
-    @DisplayName("Test knowledgeBaseConfigurationService update provider type fails due to resource not found")
+    @DisplayName("Test knowledgeBaseProviderTypeService update provider type fails due to resource not found")
     @Test
     void shouldUpdateProviderTypeFailsNotFound() {
         given(knowledgeBaseProviderTypeRepository.findByIdAndCode(someId, requestDto.getCode())).willReturn(Optional.empty());
-        Assertions.assertThrows(ProviderTypeNotExistException.class, () -> {
-            knowledgeBaseConfigurationService.updateByKnowledgeBaseProviderTypeId(someId, requestDto);
+        Assertions.assertThrows(ResourceNotExistException.class, () -> {
+            knowledgeBaseProviderTypeService.updateByKnowledgeBaseProviderTypeId(someId, requestDto);
         });
     }
 
-    @DisplayName("Test knowledgeBaseConfigurationService create provider type successfully")
+    @DisplayName("Test knowledgeBaseProviderTypeService create provider type successfully")
     @Test
     void shouldCreateProviderTypeSuccessfully() {
         // given
         given(knowledgeBaseProviderTypeRepository.findByCode(requestDto.getCode()))
-                .willReturn(new ArrayList<KnowledgeBaseProviderType>());
+                .willReturn(Optional.empty());
         given(knowledgeBaseProviderTypeRepository.save(any()))
                 .willReturn(fakeType);
         given(modelMapper.map(any(), eq(KnowledgeBaseProviderType.class))).willReturn(fakeType);
         given(modelMapper.map(any(), eq(KnowledgeBaseProviderTypeDto.class))).willReturn(requestDto);
         // when
-        KnowledgeBaseProviderTypeDto saveResult = knowledgeBaseConfigurationService
+        KnowledgeBaseProviderTypeDto saveResult = knowledgeBaseProviderTypeService
                 .createKnowledgeBaseProviderType(requestDto);
 
         // then
@@ -147,16 +147,16 @@ public class KnowledgeBaseConfigurationServiceTest {
         assertEquals(fakeType.getId(), saveResult.getId());
     }
 
-    @DisplayName("Test knowledgeBaseConfigurationService create provider type fails due to code duplication")
+    @DisplayName("Test knowledgeBaseProviderTypeService create provider type fails due to code duplication")
     @Test
     void shouldCreateProviderTypeFailsConflict() {
-        given(knowledgeBaseProviderTypeRepository.findByCode(requestDto.getCode())).willReturn(fakeTypeList);
-        Assertions.assertThrows(ProviderTypeCodePresentException.class, () -> {
-            knowledgeBaseConfigurationService.createKnowledgeBaseProviderType(requestDto);
+        given(knowledgeBaseProviderTypeRepository.findByCode(requestDto.getCode())).willReturn(Optional.of(fakeType));
+        Assertions.assertThrows(ProviderTypePresentException.class, () -> {
+            knowledgeBaseProviderTypeService.createKnowledgeBaseProviderType(requestDto);
         });
     }
 
-    @DisplayName("Test knowledgeBaseConfigurationService return provider type list as empty list successfully")
+    @DisplayName("Test knowledgeBaseProviderTypeService return provider type list as empty list successfully")
     @Test
     void shouldGetProviderTypesSuccessfully() {
         // given
@@ -166,7 +166,7 @@ public class KnowledgeBaseConfigurationServiceTest {
         mappedProviders.setContent(new ArrayList<KnowledgeBaseProviderTypeDto>());
         given(modelMapper.map(any(), any())).willReturn(mappedProviders);
         // when
-        PaginationRecord<KnowledgeBaseProviderTypeDto> findResults = knowledgeBaseConfigurationService
+        PaginationRecord<KnowledgeBaseProviderTypeDto> findResults = knowledgeBaseProviderTypeService
                 .findKnowledgeBaseProviderTypes(PageRequest.of(0,1));
 
         // then
