@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.http.MediaType;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import io.swagger.annotations.*;
@@ -34,16 +35,18 @@ public class KnowledgeBaseConfigurationApi {
     }
 
     @ApiOperation(value = "Get all knowledgebase provider type")
-    @ApiImplicitParam(name = "pageable", value = "Pagination", required = false, dataType = "Pageable", paramType = "query")
-    @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "page", value = "page offset", required = false, dataType = "int", paramType = "query"),
+        @ApiImplicitParam(name = "size", value = "page size", required = false, dataType = "int", paramType = "query") })
+    @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME, consumes = MediaType.ALL_VALUE)
     @ResponseBody
-    public PaginationRecord<KnowledgeBaseProviderTypeDto> findByKnowledgeBaseProviderTypes(Pageable pageable) {
-        return knowledgeBaseConfigurationService.findKnowledgeBaseProviderTypes(pageable);
+    public PaginationRecord<KnowledgeBaseProviderTypeDto> findByKnowledgeBaseProviderTypes(@RequestParam int page, @RequestParam int size) {
+        return knowledgeBaseConfigurationService.findKnowledgeBaseProviderTypes(PageRequest.of(page, size));
     }
 
     @ApiOperation(value = "Get a knowledgebase provider type by id")
     @ApiImplicitParam(name = "id", value = "Unique identifier of a Provider Type", required = true, dataType = "UUID", paramType = "path")
-    @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME + "/{id}")
+    @GetMapping(value = PROVIDER_TYPE_RESOURCE_URL_NAME + "/{id}", consumes = MediaType.ALL_VALUE)
     @ResponseBody
     public KnowledgeBaseProviderTypeDto findByKnowledgeBaseProviderTypeId(@PathVariable UUID id) {
         return knowledgeBaseConfigurationService.findByKnowledgeBaseProviderTypeId(id);

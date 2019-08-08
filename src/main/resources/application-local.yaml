@@ -7,7 +7,7 @@ spring:
   datasource:
     hikari:
       data-source-properties:
-        ssl: false
+        ssl: false # TODO remove it before PR
   jpa:
     show-sql: true
     data:
