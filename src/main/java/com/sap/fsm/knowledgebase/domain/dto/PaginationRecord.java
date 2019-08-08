@@ -1,14 +1,15 @@
 package com.sap.fsm.knowledgebase.domain.dto;
 
 import lombok.Data;
-
 import org.springframework.data.domain.Page;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
 @Data
 public class PaginationRecord<T> {
-    private List<T> results;
+    @JsonProperty("results")
+    private List<T> content;
     private int size;
     private int number;
     private Boolean first;
@@ -18,7 +19,7 @@ public class PaginationRecord<T> {
     private int totalPages;
 
     public PaginationRecord(Page<T> pageRecords) {
-        this.results = pageRecords.getContent();
+        this.content = pageRecords.getContent();
         this.size = pageRecords.getSize();
         this.number = pageRecords.getNumber();
         this.first = pageRecords.isFirst();
@@ -27,4 +28,8 @@ public class PaginationRecord<T> {
         this.totalElements = pageRecords.getTotalElements();
         this.totalPages = pageRecords.getTotalPages();
     }
-} 
+
+    public PaginationRecord() {
+
+    }
+}

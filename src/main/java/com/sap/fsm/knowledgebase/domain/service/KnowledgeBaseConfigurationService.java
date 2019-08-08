@@ -42,17 +42,19 @@ public class KnowledgeBaseConfigurationService {
         final KnowledgeBaseProviderType savedProviderType = knowledgeBaseProviderTypeRepository.save(providerType);
         return modelMapper.map(savedProviderType, KnowledgeBaseProviderTypeDto.class);
     }
-   
+
     @Transactional
     public KnowledgeBaseProviderTypeDto updateByKnowledgeBaseProviderTypeId(UUID id,
             KnowledgeBaseProviderTypeDto requestDto) {
-        Optional<KnowledgeBaseProviderType> findResult = knowledgeBaseProviderTypeRepository.findByIdAndCode(id, requestDto.getCode());
+        Optional<KnowledgeBaseProviderType> findResult = knowledgeBaseProviderTypeRepository.findByIdAndCode(id,
+                requestDto.getCode());
         if (!findResult.isPresent()) {
             throw new ProviderTypeNotExistException(id);
         }
         KnowledgeBaseProviderType providerType = findResult.get();
         providerType.setName(requestDto.getName()); // only allow to change name
-        // final KnowledgeBaseProviderType savedProviderType = knowledgeBaseProviderTypeRepository.save(providerType);
+        // final KnowledgeBaseProviderType savedProviderType =
+        // knowledgeBaseProviderTypeRepository.save(providerType);
         return modelMapper.map(providerType, KnowledgeBaseProviderTypeDto.class);
     }
 
@@ -64,11 +66,12 @@ public class KnowledgeBaseConfigurationService {
         return modelMapper.map(findResult.get(), KnowledgeBaseProviderTypeDto.class);
     }
 
+    @SuppressWarnings("unchecked")
     public PaginationRecord<KnowledgeBaseProviderTypeDto> findKnowledgeBaseProviderTypes(Pageable pageable) {
         Page<KnowledgeBaseProviderTypeDto> findResults = knowledgeBaseProviderTypeRepository.findAll(pageable)
                 .map(item -> {
                     return modelMapper.map(item, KnowledgeBaseProviderTypeDto.class);
                 });
-        return new PaginationRecord<KnowledgeBaseProviderTypeDto>(findResults);
+        return modelMapper.map(findResults, new PaginationRecord<KnowledgeBaseProviderTypeDto>().getClass());
     }
 }
