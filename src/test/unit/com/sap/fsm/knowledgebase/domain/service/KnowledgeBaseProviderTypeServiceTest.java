@@ -28,6 +28,7 @@ import org.modelmapper.ModelMapper;
 import org.json.JSONException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -41,7 +42,7 @@ public class KnowledgeBaseProviderTypeServiceTest {
     private ModelMapper modelMapper;
 
     @Mock
-    private KnowledgeBaseProviderTypeRepository knowledgeBaseProviderTypeRepository;
+    private KnowledgeBaseProviderTypeRepository mockRepository;
 
     @InjectMocks
     private KnowledgeBaseProviderTypeService knowledgeBaseProviderTypeService;
@@ -66,7 +67,7 @@ public class KnowledgeBaseProviderTypeServiceTest {
     @BeforeEach
     public void initMocks() throws JSONException {
         MockitoAnnotations.initMocks(this);
-        requestDto =  new KnowledgeBaseProviderTypeDto();
+        requestDto = new KnowledgeBaseProviderTypeDto();
         requestDto.setCode(fakeType.getCode());
         requestDto.setName(fakeType.getName());
         requestDto.setId(fakeType.getId());
@@ -77,7 +78,7 @@ public class KnowledgeBaseProviderTypeServiceTest {
     @Test
     void shouldGetProviderTypeByIdSuccessfully() {
         // given
-        given(knowledgeBaseProviderTypeRepository.findById(someId)).willReturn(Optional.of(fakeType));
+        given(mockRepository.findById(someId)).willReturn(Optional.of(fakeType));
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
         // when
@@ -93,7 +94,7 @@ public class KnowledgeBaseProviderTypeServiceTest {
     @DisplayName("Test knowledgeBaseProviderTypeService get provider type by id fails due to resource not found")
     @Test
     void shouldGetProviderTypeByIdNotFound() {
-        given(knowledgeBaseProviderTypeRepository.findById(someId)).willReturn(Optional.empty());
+        given(mockRepository.findById(someId)).willReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
             knowledgeBaseProviderTypeService.findByKnowledgeBaseProviderTypeId(someId);
         });
@@ -102,10 +103,9 @@ public class KnowledgeBaseProviderTypeServiceTest {
     @DisplayName("Test knowledgeBaseProviderTypeService update provider type successfully")
     @Test
     void shouldUpdateProviderTypeSuccessfully() {
-        // given  
+        // given
         requestDto.setName("Hello");
-        given(knowledgeBaseProviderTypeRepository.findByIdAndCode(someId, requestDto.getCode()))
-                .willReturn(Optional.of(fakeType));
+        given(mockRepository.findByIdAndCode(someId, requestDto.getCode())).willReturn(Optional.of(fakeType));
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
         // when
@@ -121,7 +121,7 @@ public class KnowledgeBaseProviderTypeServiceTest {
     @DisplayName("Test knowledgeBaseProviderTypeService update provider type fails due to resource not found")
     @Test
     void shouldUpdateProviderTypeFailsNotFound() {
-        given(knowledgeBaseProviderTypeRepository.findByIdAndCode(someId, requestDto.getCode())).willReturn(Optional.empty());
+        given(mockRepository.findByIdAndCode(someId, requestDto.getCode())).willReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
             knowledgeBaseProviderTypeService.updateByKnowledgeBaseProviderTypeId(someId, requestDto);
         });
@@ -131,10 +131,8 @@ public class KnowledgeBaseProviderTypeServiceTest {
     @Test
     void shouldCreateProviderTypeSuccessfully() {
         // given
-        given(knowledgeBaseProviderTypeRepository.findByCode(requestDto.getCode()))
-                .willReturn(Optional.empty());
-        given(knowledgeBaseProviderTypeRepository.save(any()))
-                .willReturn(fakeType);
+        given(mockRepository.findByCode(requestDto.getCode())).willReturn(Optional.empty());
+        given(mockRepository.save(any())).willReturn(fakeType);
         given(modelMapper.map(any(), eq(KnowledgeBaseProviderType.class))).willReturn(fakeType);
         given(modelMapper.map(any(), eq(KnowledgeBaseProviderTypeDto.class))).willReturn(requestDto);
         // when
@@ -150,7 +148,7 @@ public class KnowledgeBaseProviderTypeServiceTest {
     @DisplayName("Test knowledgeBaseProviderTypeService create provider type fails due to code duplication")
     @Test
     void shouldCreateProviderTypeFailsConflict() {
-        given(knowledgeBaseProviderTypeRepository.findByCode(requestDto.getCode())).willReturn(Optional.of(fakeType));
+        given(mockRepository.findByCode(requestDto.getCode())).willReturn(Optional.of(fakeType));
         Assertions.assertThrows(ProviderTypePresentException.class, () -> {
             knowledgeBaseProviderTypeService.createKnowledgeBaseProviderType(requestDto);
         });
@@ -158,19 +156,20 @@ public class KnowledgeBaseProviderTypeServiceTest {
 
     @DisplayName("Test knowledgeBaseProviderTypeService return provider type list as empty list successfully")
     @Test
-    void shouldGetProviderTypesSuccessfully() {
+    void shouldGetProviderTypesAsEmptyListSuccessfully() {
         // given
-        given(knowledgeBaseProviderTypeRepository.findAll(PageRequest.of(0,1)))
+        given(mockRepository.findAll(any(Pageable.class)))
                 .willReturn(new PageImpl<KnowledgeBaseProviderType>(new ArrayList<KnowledgeBaseProviderType>()));
         PaginationRecord<KnowledgeBaseProviderTypeDto> mappedProviders = new PaginationRecord<KnowledgeBaseProviderTypeDto>();
         mappedProviders.setContent(new ArrayList<KnowledgeBaseProviderTypeDto>());
         given(modelMapper.map(any(), any())).willReturn(mappedProviders);
         // when
         PaginationRecord<KnowledgeBaseProviderTypeDto> findResults = knowledgeBaseProviderTypeService
-                .findKnowledgeBaseProviderTypes(PageRequest.of(0,1));
+                .findKnowledgeBaseProviderTypes(PageRequest.of(0, 1));
 
         // then
         assertEquals(0, findResults.getContent().size());
         verify(modelMapper, times(1)).map(any(), eq(new PaginationRecord<KnowledgeBaseProviderTypeDto>().getClass()));
+        verify(mockRepository, times(1)).findAll(PageRequest.of(0, 1));
     }
 }

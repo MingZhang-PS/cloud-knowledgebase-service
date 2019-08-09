@@ -1,6 +1,7 @@
 package com.sap.fsm.knowledgebase.infrastructure.api;
 
 import com.sap.fsm.knowledgebase.domain.repository.KnowledgeBaseProviderTypeRepository;
+import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseGeneralSetting;
 import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseProviderType;
 import com.sap.fsm.springboot.starter.test.annotation.Integration;
 import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseProviderTypeDto;
@@ -43,7 +44,7 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
 @Integration
-class KnowledgeBaseConfigurationApiTest {
+class KnowledgeBaseProviderTypeApiTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -135,27 +136,10 @@ class KnowledgeBaseConfigurationApiTest {
     }
 
     @Test
-    public void findProviderTypesWrongParams() throws Exception {
-        // given
-
-        // when
-        ResultActions result = mockMvc
-                .perform(get(basePath + "provider-types" + "?page=0&pageSize=1").accept(APPLICATION_JSON_UTF8)); // pageSize
-                                                                                                                 // is
-                                                                                                                 // not
-                                                                                                                 // an
-                                                                                                                 // acceptable
-                                                                                                                 // param
-
-        // then
-        result.andDo(print()).andExpect(status().isBadRequest());
-    }
-
-    @Test
     public void createProviderTypeWithoutCode() throws Exception {
         // given
         providerType.setCode(null);
-        ;
+
         // when
         ResultActions result = mockMvc.perform(post(basePath + "provider-types").contentType(APPLICATION_JSON_UTF8)
                 .content(om.writeValueAsString(mm.map(providerType, KnowledgeBaseProviderTypeDto.class))).accept(APPLICATION_JSON_UTF8));
@@ -183,8 +167,7 @@ class KnowledgeBaseConfigurationApiTest {
 
         verify(mockRepository, times(0)).save(any());
     }
-
-    
+  
     @Test
     public void createProviderTypeSuccessfully() throws Exception {
         // given
@@ -238,7 +221,6 @@ class KnowledgeBaseConfigurationApiTest {
         result.andDo(print()).andExpect(status().isOk())
         .andExpect(jsonPath("$.name", is("change name")))
         .andExpect(jsonPath("$.code", is(providerType.getCode())));
-
-        verify(mockRepository, times(0)).save(any());
     }
+
 }

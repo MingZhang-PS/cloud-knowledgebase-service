@@ -18,8 +18,10 @@ import org.modelmapper.ModelMapper;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Date;
 
 @Service
+@Transactional(readOnly = true)
 public class KnowledgeBaseProviderTypeService {
 
     private static final Logger logger = LoggerFactory.getLogger(KnowledgeBaseProviderTypeService.class);
@@ -52,8 +54,7 @@ public class KnowledgeBaseProviderTypeService {
         }
         KnowledgeBaseProviderType providerType = findResult.get();
         providerType.setName(requestDto.getName()); // only allow to change name
-        // final KnowledgeBaseProviderType savedProviderType =
-        // knowledgeBaseProviderTypeRepository.save(providerType);
+        providerType.setLastChanged(new Date()); // update field lastChanged to increase version
         return modelMapper.map(providerType, KnowledgeBaseProviderTypeDto.class);
     }
 
