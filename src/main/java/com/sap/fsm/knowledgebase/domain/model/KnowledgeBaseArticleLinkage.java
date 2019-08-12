@@ -5,12 +5,12 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-@Entity
-@Table(name = "knowledgebasearticlelinkage")
 @Valid
 @Data
+@Entity(name = "knowledgebasearticlelinkage")
 public class KnowledgeBaseArticleLinkage {
     @Id
     @GeneratedValue(generator="system-uuid")
@@ -18,15 +18,19 @@ public class KnowledgeBaseArticleLinkage {
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     private UUID id;
 
+    @NotNull
     @Column(name = "articleId", nullable = false, length = 512)
     private String articleId;
 
+    @NotNull
     @Column(name = "providerType", nullable = false, length = 512)
     private String providerType;
 
+    @NotNull
     @Column(name = "objectType", nullable = false, length = 512)
     private String objectType;
 
+    @NotNull
     @Column(name = "objectId", nullable = false, length = 512)
     private String objectId;
 }
