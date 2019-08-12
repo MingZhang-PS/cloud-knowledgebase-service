@@ -25,8 +25,6 @@
       insert into ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting(id, lastchanged, key, value) 
         values ('1485ee85-2e04-4110-bf83-6d7281722bef', NOW(), 'enabled', '');
 
-      insert into ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting(id, lastchanged, key, value) 
-        values ('944ccdc5-38a4-4dbc-93c1-d6b3e05f3f8d', NOW(), 'activeProvider', '');
 
       alter table if exists ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting
             add constraint key_idx unique (key);
@@ -66,7 +64,7 @@
       LANGUAGE plpgsql
       AS $$
         begin            
-          if old.key = 'enabled' or old.key = 'activeProvider' then
+          if old.key = 'enabled'  then
             raise exception 'cannot delete default general setting';
           end if;
         end;

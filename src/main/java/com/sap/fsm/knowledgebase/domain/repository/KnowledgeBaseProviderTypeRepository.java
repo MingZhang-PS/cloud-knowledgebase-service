@@ -9,11 +9,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 import java.util.Optional;
-import java.util.List;
 
 @Repository
 public interface KnowledgeBaseProviderTypeRepository extends JpaRepository<KnowledgeBaseProviderType, UUID> {
-        List<KnowledgeBaseProviderType> findByCode(String code);
+        Optional<KnowledgeBaseProviderType> findByCode(String code);
         Optional<KnowledgeBaseProviderType> findByIdAndCode(UUID id, String code);
         Page<KnowledgeBaseProviderType> findAll(Pageable pageable);
 }

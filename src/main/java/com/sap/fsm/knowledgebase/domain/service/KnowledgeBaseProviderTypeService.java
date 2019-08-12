@@ -18,12 +18,13 @@ import org.modelmapper.ModelMapper;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.List;
+import java.util.Date;
 
 @Service
-public class KnowledgeBaseConfigurationService {
+@Transactional(readOnly = true)
+public class KnowledgeBaseProviderTypeService {
 
-    private static final Logger logger = LoggerFactory.getLogger(KnowledgeBaseConfigurationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(KnowledgeBaseProviderTypeService.class);
 
     @Autowired
     private ModelMapper modelMapper;
@@ -33,42 +34,44 @@ public class KnowledgeBaseConfigurationService {
 
     @Transactional
     public KnowledgeBaseProviderTypeDto createKnowledgeBaseProviderType(KnowledgeBaseProviderTypeDto requestDto) {
-        List<KnowledgeBaseProviderType> findResults = knowledgeBaseProviderTypeRepository
+        Optional<KnowledgeBaseProviderType> findResult = knowledgeBaseProviderTypeRepository
                 .findByCode(requestDto.getCode());
-        if (findResults != null && !findResults.isEmpty()) {
-            throw new ProviderTypeCodePresentException(requestDto.getCode());
+        if (findResult.isPresent()) {
+            throw new ProviderTypePresentException(requestDto.getCode());
         }
-        final KnowledgeBaseProviderType providerType = modelMapper.map(requestDto, KnowledgeBaseProviderType.class);
-        final KnowledgeBaseProviderType savedProviderType = knowledgeBaseProviderTypeRepository.save(providerType);
+        KnowledgeBaseProviderType providerType = modelMapper.map(requestDto, KnowledgeBaseProviderType.class);
+        KnowledgeBaseProviderType savedProviderType = knowledgeBaseProviderTypeRepository.save(providerType);
         return modelMapper.map(savedProviderType, KnowledgeBaseProviderTypeDto.class);
     }
-   
+
     @Transactional
     public KnowledgeBaseProviderTypeDto updateByKnowledgeBaseProviderTypeId(UUID id,
             KnowledgeBaseProviderTypeDto requestDto) {
-        Optional<KnowledgeBaseProviderType> findResult = knowledgeBaseProviderTypeRepository.findByIdAndCode(id, requestDto.getCode());
+        Optional<KnowledgeBaseProviderType> findResult = knowledgeBaseProviderTypeRepository.findByIdAndCode(id,
+                requestDto.getCode());
         if (!findResult.isPresent()) {
-            throw new ProviderTypeNotExistException(id);
+            throw new ResourceNotExistException(id);
         }
         KnowledgeBaseProviderType providerType = findResult.get();
         providerType.setName(requestDto.getName()); // only allow to change name
-        // final KnowledgeBaseProviderType savedProviderType = knowledgeBaseProviderTypeRepository.save(providerType);
+        providerType.setLastChanged(new Date()); // update field lastChanged to increase version
         return modelMapper.map(providerType, KnowledgeBaseProviderTypeDto.class);
     }
 
     public KnowledgeBaseProviderTypeDto findByKnowledgeBaseProviderTypeId(UUID id) {
         Optional<KnowledgeBaseProviderType> findResult = knowledgeBaseProviderTypeRepository.findById(id);
         if (!findResult.isPresent()) {
-            throw new ProviderTypeNotExistException(id);
+            throw new ResourceNotExistException(id);
         }
         return modelMapper.map(findResult.get(), KnowledgeBaseProviderTypeDto.class);
     }
 
+    @SuppressWarnings("unchecked")
     public PaginationRecord<KnowledgeBaseProviderTypeDto> findKnowledgeBaseProviderTypes(Pageable pageable) {
         Page<KnowledgeBaseProviderTypeDto> findResults = knowledgeBaseProviderTypeRepository.findAll(pageable)
                 .map(item -> {
                     return modelMapper.map(item, KnowledgeBaseProviderTypeDto.class);
                 });
-        return new PaginationRecord<KnowledgeBaseProviderTypeDto>(findResults);
+        return modelMapper.map(findResults, new PaginationRecord<KnowledgeBaseProviderTypeDto>().getClass());
     }
 }
