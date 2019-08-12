@@ -14,11 +14,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/api/knowledge-base/v1/",
-        consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE },
+        consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE},
         produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 @Validated
 public class KnowledgeBaseArticleLinkageApi {
-
     private static final String RESOURCE_URL_NAME = "article-linkages";
     private final KnowledgeBaseArticleLinkageService articleLinkageService;
 
@@ -55,5 +54,14 @@ public class KnowledgeBaseArticleLinkageApi {
     public PaginationRecord<KnowledgeBaseArticleLinkageDto> findArticleLinkagesByArticleId(@RequestParam(value = "articleId") String articleId,
                                                                                            Pageable pageable) {
         return articleLinkageService.retrieveArticleLinkagesByArticleId(articleId, pageable);
+    }
+
+    @GetMapping(value = RESOURCE_URL_NAME, params = {"providerType", "articleId"})
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public PaginationRecord<KnowledgeBaseArticleLinkageDto> findArtcileLinkagesByProviderTypeAndArticleId(@RequestParam(value = "providerType") String providerType,
+                                                                                                          @RequestParam(value = "articleId") String articleId,
+                                                                                                          Pageable pageable) {
+        return articleLinkageService.retrieveArticleLinkeageByProviderTypeAndArticleId(providerType, articleId, pageable);
     }
 }

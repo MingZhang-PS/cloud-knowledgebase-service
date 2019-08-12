@@ -1,6 +1,8 @@
 package com.sap.fsm.knowledgebase.domain.service;
 
 import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
+import com.sap.fsm.knowledgebase.domain.exception.ArticleLinkageNotExistException;
+import com.sap.fsm.knowledgebase.domain.exception.ArticleLinkageExistException;
 import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseArticleLinkage;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,34 +14,50 @@ import com.sap.fsm.knowledgebase.domain.repository.KnowledgeBaseArticleLinkageRe
 import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseArticleLinkageDto;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sap.fsm.knowledgebase.domain.exception.ArticleLinkageNotExistException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class KnowledgeBaseArticleLinkageService {
-    @Autowired
-    private ModelMapper modelMapper;
+    private static final Logger logger = LoggerFactory.getLogger(KnowledgeBaseArticleLinkageService.class);
+    private final ModelMapper modelMapper;
+    private final KnowledgeBaseArticleLinkageRepository articleLinkageRepository;
 
     @Autowired
-    private KnowledgeBaseArticleLinkageRepository articleLinkageRepository;
+    public KnowledgeBaseArticleLinkageService(ModelMapper modelMapper, KnowledgeBaseArticleLinkageRepository articleLinkageRepository) {
+        this.modelMapper = modelMapper;
+        this.articleLinkageRepository = articleLinkageRepository;
+    }
 
     // Create Article Linkage
     public KnowledgeBaseArticleLinkageDto createArticleLinkage(KnowledgeBaseArticleLinkageDto articleLinkageDto) {
+        if (null != articleLinkageDto.getId() && articleLinkageRepository.existsById(articleLinkageDto.getId())) {
+            final String errorMsg = String.format("ArticleLinkage already present for id: %s", articleLinkageDto.getId().toString());
+            logger.error(errorMsg);
+            throw new ArticleLinkageExistException(errorMsg);
+        }
+
         KnowledgeBaseArticleLinkage requestedLinkageModel = this.modelMapper.map(articleLinkageDto, KnowledgeBaseArticleLinkage.class);
         KnowledgeBaseArticleLinkage responseLinkageModel = this.articleLinkageRepository.save(requestedLinkageModel);
-
         return this.modelMapper.map(responseLinkageModel, KnowledgeBaseArticleLinkageDto.class);
     }
 
     // Delete Article Linkage by Id
     public void deleteArticleLinkageById(UUID articleLinkageId) {
-        this.articleLinkageRepository.deleteById(articleLinkageId);
+        if (this.articleLinkageRepository.existsById(articleLinkageId)) {
+            this.articleLinkageRepository.deleteById(articleLinkageId);
+        } else {
+            ArticleLinkageNotExistException ex = new ArticleLinkageNotExistException(articleLinkageId);
+            logger.error(ex.getMessage());
+            throw ex;
+        }
     }
 
     // Retrieve Article Linkage by ObjectId and ObjectType
+    @Transactional(readOnly = true)
     public PaginationRecord<KnowledgeBaseArticleLinkageDto> retrieveArticleLinkagesByObjectIDAndType(String objectType,
                                                                                                      String objectId,
                                                                                                      Pageable pageable) {
@@ -52,21 +70,22 @@ public class KnowledgeBaseArticleLinkageService {
     }
 
     // Retrieve Article Linkage by ArticleId and ProviderType
-    public KnowledgeBaseArticleLinkageDto retrieveArticleLinkeageByProviderTypeAndArticleId(String providerType,
-                                                                                            String articleId) {
-        Optional<KnowledgeBaseArticleLinkage> result =
-                this.articleLinkageRepository.findByProviderTypeAndArticleId(providerType, articleId);
-        if (!result.isPresent()) {
-            String errorMsg = String.format("ArticleLinkage not found by providerType(%s) and articleId(%s)", providerType, articleId);
-            throw new ArticleLinkageNotExistException(errorMsg);
-        }
+    @Transactional(readOnly = true)
+    public PaginationRecord<KnowledgeBaseArticleLinkageDto> retrieveArticleLinkeageByProviderTypeAndArticleId(String providerType,
+                                                                                                              String articleId,
+                                                                                                              Pageable pageable) {
+        Page<KnowledgeBaseArticleLinkageDto> results =
+                this.articleLinkageRepository.findByProviderTypeAndArticleId(providerType, articleId, pageable).map(result -> {
+                    return this.modelMapper.map(result, KnowledgeBaseArticleLinkageDto.class);
+                });
 
-        return this.modelMapper.map(result.get(), KnowledgeBaseArticleLinkageDto.class);
+        return new PaginationRecord<KnowledgeBaseArticleLinkageDto>(results);
     }
 
 
     // Retrieve Article Linkage by ArticleId
-    public PaginationRecord<KnowledgeBaseArticleLinkageDto> retrieveArticleLinkagesByArticleId (String articleId, Pageable pageable) {
+    @Transactional(readOnly = true)
+    public PaginationRecord<KnowledgeBaseArticleLinkageDto> retrieveArticleLinkagesByArticleId(String articleId, Pageable pageable) {
         Page<KnowledgeBaseArticleLinkageDto> results =
                 this.articleLinkageRepository.findByArticleId(articleId, pageable).map(result -> {
                     return this.modelMapper.map(result, KnowledgeBaseArticleLinkageDto.class);

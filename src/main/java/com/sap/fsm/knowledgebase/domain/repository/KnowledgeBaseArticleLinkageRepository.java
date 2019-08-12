@@ -19,5 +19,5 @@ public interface KnowledgeBaseArticleLinkageRepository extends JpaRepository<Kno
     Page<KnowledgeBaseArticleLinkage> findByArticleId(String articleId, Pageable pageable);
 
     // Retrieve by articleId and providerType
-    Optional<KnowledgeBaseArticleLinkage> findByProviderTypeAndArticleId(String providerType, String articleId);
+    Page<KnowledgeBaseArticleLinkage> findByProviderTypeAndArticleId(String providerType, String articleId, Pageable pageable);
 }

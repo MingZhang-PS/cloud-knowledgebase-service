@@ -24,13 +24,12 @@
                 primary key (id)
             );
 
-            alter table if exists ${database.defaultSchemaName}.knowledgebasearticlelinkage
-                add constraint objectTypeToId_constraint unique (objectType, objectId);
-                CREATE UNIQUE INDEX objectTypeToId_index ON ${database.defaultSchemaName}.knowledgebasearticlelinkage (objectType, objectId);
+            CREATE INDEX objectTypeToId_index ON ${database.defaultSchemaName}.knowledgebasearticlelinkage (objectType, objectId);
+            CREATE INDEX articleId_index ON ${database.defaultSchemaName}.knowledgebasearticlelinkage (articleId);
+            CREATE INDEX providerTypeToArticleId_index ON ${database.defaultSchemaName}.knowledgebasearticlelinkage (providerType, articleId);
 
             alter table if exists ${database.defaultSchemaName}.knowledgebasearticlelinkage
-                add constraint providerTypeToArticleId_constraint unique (providerType, articleId);
-                CREATE UNIQUE INDEX providerTypeToArticleId_index ON ${database.defaultSchemaName}.knowledgebasearticlelinkage (providerType, articleId);
+                add constraint record_unique_constraint unique (providerType, articleId, objectType, objectId);
 
         </sql>
     </changeSet>
