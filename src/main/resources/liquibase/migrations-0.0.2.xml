@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet failOnError="false" id="002_1" author="ming">
+    <preConditions onFail="CONTINUE"
+                   onFailMessage="KnowledgeBaseProviderConfiguration table exists. Changeset skipped."> <!-- http://www.liquibase.org/documentation/preconditions.html -->
+      <not>
+        <tableExists tableName="KnowledgeBaseProviderConfiguration" schemaName="${database.defaultSchemaName}"/>
+      </not>
+    </preConditions>
+    <comment>Create KnowledgeBaseProviderConfiguration table if not exists</comment>
+    <sql>
+      create table ${database.defaultSchemaName}.KnowledgeBaseProviderConfiguration
+      ( id uuid not null,
+        lastChanged timestamp, 
+        
+        providerType uuid not null,
+        isActive boolean,
+        adapterAuthType varchar(255),
+        adapterURL varchar(255),
+        adapterCredential jsonb,
+        siteAuthType varchar(255),
+        siteURL varchar(255),
+        siteCredential jsonb,
+        primary key (id));
+
+      alter table if exists ${database.defaultSchemaName}.KnowledgeBaseProviderConfiguration
+            add constraint providerType_idx unique (providerType);
+
+      alter table if exists ${database.defaultSchemaName}.KnowledgeBaseProviderConfiguration
+            add constraint providerType_fkey foreign key (providerType)
+            references ${database.defaultSchemaName}.KnowledgeBaseProviderType;     
+    </sql>
+  </changeSet>      
+</databaseChangeLog>
