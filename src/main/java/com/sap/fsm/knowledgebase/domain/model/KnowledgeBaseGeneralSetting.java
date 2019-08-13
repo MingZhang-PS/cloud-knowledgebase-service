@@ -1,16 +1,13 @@
 package com.sap.fsm.knowledgebase.domain.model;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 
 import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import java.util.UUID;
 import java.util.Date;
 
 @Entity
@@ -18,11 +15,11 @@ import java.util.Date;
 @Valid
 @Data
 public class KnowledgeBaseGeneralSetting {
+    
     @Id
-    @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid2")
-    @Column(name = "id", unique = true)
-    private UUID id;
+    @Column(name = "key", unique = true, nullable = false,  updatable = false)
+    @Length(max = 255)
+    private String key;
 
     @NotNull
     @Column(name = "lastchanged")
@@ -30,13 +27,9 @@ public class KnowledgeBaseGeneralSetting {
     @Version
     private Date lastChanged;
 
-    @NotBlank
-    @Column(nullable = false, updatable = false)
-    @Length(max = 512)
-    private String key;
 
     @Column
-    @Length(max = 512)
+    @Length(max = 255)
     private String value;
 
     @PrePersist

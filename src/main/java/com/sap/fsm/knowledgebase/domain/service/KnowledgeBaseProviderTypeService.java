@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.modelmapper.ModelMapper;
 
-import java.util.Optional;
 import java.util.UUID;
 import java.util.Date;
 
@@ -34,11 +33,10 @@ public class KnowledgeBaseProviderTypeService {
 
     @Transactional
     public KnowledgeBaseProviderTypeDto createKnowledgeBaseProviderType(KnowledgeBaseProviderTypeDto requestDto) {
-        Optional<KnowledgeBaseProviderType> findResult = knowledgeBaseProviderTypeRepository
-                .findByCode(requestDto.getCode());
-        if (findResult.isPresent()) {
+        knowledgeBaseProviderTypeRepository.findByCode(requestDto.getCode()).ifPresent(result -> {
             throw new ProviderTypePresentException(requestDto.getCode());
-        }
+        });
+
         KnowledgeBaseProviderType providerType = modelMapper.map(requestDto, KnowledgeBaseProviderType.class);
         KnowledgeBaseProviderType savedProviderType = knowledgeBaseProviderTypeRepository.save(providerType);
         return modelMapper.map(savedProviderType, KnowledgeBaseProviderTypeDto.class);
@@ -47,23 +45,20 @@ public class KnowledgeBaseProviderTypeService {
     @Transactional
     public KnowledgeBaseProviderTypeDto updateByKnowledgeBaseProviderTypeId(UUID id,
             KnowledgeBaseProviderTypeDto requestDto) {
-        Optional<KnowledgeBaseProviderType> findResult = knowledgeBaseProviderTypeRepository.findByIdAndCode(id,
-                requestDto.getCode());
-        if (!findResult.isPresent()) {
-            throw new ResourceNotExistException(id);
-        }
-        KnowledgeBaseProviderType providerType = findResult.get();
+        KnowledgeBaseProviderType findResult = knowledgeBaseProviderTypeRepository
+                .findByIdAndCode(id, requestDto.getCode())
+                .orElseThrow(() -> new ResourceNotExistException(id.toString()));
+
+        KnowledgeBaseProviderType providerType = findResult;
         providerType.setName(requestDto.getName()); // only allow to change name
         providerType.setLastChanged(new Date()); // update field lastChanged to increase version
         return modelMapper.map(providerType, KnowledgeBaseProviderTypeDto.class);
     }
 
     public KnowledgeBaseProviderTypeDto findByKnowledgeBaseProviderTypeId(UUID id) {
-        Optional<KnowledgeBaseProviderType> findResult = knowledgeBaseProviderTypeRepository.findById(id);
-        if (!findResult.isPresent()) {
-            throw new ResourceNotExistException(id);
-        }
-        return modelMapper.map(findResult.get(), KnowledgeBaseProviderTypeDto.class);
+        KnowledgeBaseProviderType findResult = knowledgeBaseProviderTypeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotExistException(id.toString()));
+        return modelMapper.map(findResult, KnowledgeBaseProviderTypeDto.class);
     }
 
     @SuppressWarnings("unchecked")

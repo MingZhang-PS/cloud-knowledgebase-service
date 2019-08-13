@@ -1,8 +1,6 @@
 package com.sap.fsm.knowledgebase.domain.service;
 
 import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -34,52 +32,39 @@ public class KnowledgeBaseGeneralSettingService {
 
     @Transactional
     public KnowledgeBaseGeneralSettingDto createKnowledgeGeneralSetting(KnowledgeBaseGeneralSettingDto requestDto) {
-        Optional<KnowledgeBaseGeneralSetting> findResult = knowledgeBaseGeneralSettingRepository
-                .findByKey(requestDto.getKey());
-        if (findResult.isPresent()) {
+        knowledgeBaseGeneralSettingRepository.findByKey(requestDto.getKey()).ifPresent(result -> {
             throw new SettingPresentException(requestDto.getKey());
-        }
+        });
+
         KnowledgeBaseGeneralSetting setting = modelMapper.map(requestDto, KnowledgeBaseGeneralSetting.class);
         KnowledgeBaseGeneralSetting savedSetting = knowledgeBaseGeneralSettingRepository.save(setting);
         return modelMapper.map(savedSetting, KnowledgeBaseGeneralSettingDto.class);
     }
 
     @Transactional
-    public KnowledgeBaseGeneralSettingDto updateByKnowledgeBaseSettingId(UUID id,
+    public KnowledgeBaseGeneralSettingDto updateByKnowledgeBaseSettingKey(String key,
             KnowledgeBaseGeneralSettingDto requestDto) {
-        Optional<KnowledgeBaseGeneralSetting> findResult = knowledgeBaseGeneralSettingRepository.findByIdAndKey(id,
-                requestDto.getKey());
-        if (!findResult.isPresent()) {
-            throw new ResourceNotExistException(id);
-        }
-        KnowledgeBaseGeneralSetting setting = findResult.get();
+        KnowledgeBaseGeneralSetting findResult = knowledgeBaseGeneralSettingRepository.findByKey(requestDto.getKey())
+                .orElseThrow(() -> new ResourceNotExistException(key));
+
+        KnowledgeBaseGeneralSetting setting = findResult;
         setting.setValue(requestDto.getValue());
         setting.setLastChanged(new Date());
         return modelMapper.map(setting, KnowledgeBaseGeneralSettingDto.class);
     }
 
-    public KnowledgeBaseGeneralSettingDto findByKnowledgeBaseSettingId(UUID id) {
-        Optional<KnowledgeBaseGeneralSetting> findResult = knowledgeBaseGeneralSettingRepository.findById(id);
-        if (!findResult.isPresent()) {
-            throw new ResourceNotExistException(id);
-        }
-        return modelMapper.map(findResult.get(), KnowledgeBaseGeneralSettingDto.class);
+    public KnowledgeBaseGeneralSettingDto findByKnowledgeBaseSettingKey(String key) {
+        KnowledgeBaseGeneralSetting findResult = knowledgeBaseGeneralSettingRepository.findByKey(key)
+                .orElseThrow(() -> new ResourceNotExistException(key));
+        return modelMapper.map(findResult, KnowledgeBaseGeneralSettingDto.class);
     }
 
     @SuppressWarnings("unchecked")
-    public PaginationRecord<KnowledgeBaseGeneralSettingDto> findKnowledgeBaseGeneralSettings(String key,
-            Pageable pageable) {
-        Page<KnowledgeBaseGeneralSetting> findResults;
-        if (key != null && !key.isEmpty()) {
-            findResults = knowledgeBaseGeneralSettingRepository.findByKey(key, pageable);
-        } else {
-            findResults = knowledgeBaseGeneralSettingRepository.findAll(pageable);
-        }
-
+    public PaginationRecord<KnowledgeBaseGeneralSettingDto> findKnowledgeBaseGeneralSettings(Pageable pageable) {
+        Page<KnowledgeBaseGeneralSetting> findResults = knowledgeBaseGeneralSettingRepository.findAll(pageable);
         Page<KnowledgeBaseGeneralSettingDto> transformedFindResults = findResults.map(item -> {
             return modelMapper.map(item, KnowledgeBaseGeneralSettingDto.class);
         });
-
         return modelMapper.map(transformedFindResults,
                 new PaginationRecord<KnowledgeBaseGeneralSettingDto>().getClass());
     }

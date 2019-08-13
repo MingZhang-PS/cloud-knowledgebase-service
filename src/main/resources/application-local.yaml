@@ -19,5 +19,6 @@ spring:
           size-parameter: size
           sort-parameter: orderBy
 
+
 server:
   port: 8081

@@ -34,7 +34,6 @@ import org.hamcrest.collection.IsEmptyCollection;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.UUID;
 import java.util.Date;
 import java.util.Optional;
 import java.util.ArrayList;
@@ -53,7 +52,7 @@ class KnowledgeGeneralSettingApiTest {
         @MockBean
         private KnowledgeBaseGeneralSettingRepository mockRepository;
 
-        private UUID someId = UUID.fromString("9049529f-f6f2-4881-87b3-bcbc4ab3f886");
+        private String someKey = "enabled";
         private String basePath = "/api/knowledge-base/v1/";
         private KnowledgeBaseGeneralSetting generalSetting;
         private static final ObjectMapper om = new ObjectMapper();
@@ -62,40 +61,39 @@ class KnowledgeGeneralSettingApiTest {
         @BeforeEach
         void initTestCase() {
                 generalSetting = new KnowledgeBaseGeneralSetting();
-                generalSetting.setId(someId);
-                generalSetting.setKey("SomeKey");
+                generalSetting.setKey(someKey);
                 generalSetting.setLastChanged(new Date());
                 generalSetting.setValue("for test");
         }
 
         @Test
-        public void findGeneralSettingByIdOK() throws Exception {
+        public void findGeneralSettingByKeyOK() throws Exception {
                 // given
-                given(mockRepository.findById(someId)).willReturn(Optional.of(generalSetting));
+                given(mockRepository.findByKey(someKey)).willReturn(Optional.of(generalSetting));
 
                 // when
-                ResultActions result = mockMvc.perform(get(basePath + "general-settings" + "/" + someId.toString())
+                ResultActions result = mockMvc.perform(get(basePath + "general-settings" + "/" + someKey)
                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
-                result.andExpect(status().isOk()).andExpect(jsonPath("$.id", is(someId.toString())))
+                result.andExpect(status().isOk())
                                 .andExpect(jsonPath("$.key", is(generalSetting.getKey())))
                                 .andExpect(jsonPath("$.value", is(generalSetting.getValue())));
-                verify(mockRepository, times(1)).findById(someId);
+                verify(mockRepository, times(1)).findByKey(someKey);
         }
 
         @Test
-        public void findGeneralSettingByIdFails() throws Exception {
+        public void findGeneralSettingByKeyFails() throws Exception {
                 // given
-                given(mockRepository.findById(someId)).willReturn(Optional.empty());
+                given(mockRepository.findByKey(someKey)).willReturn(Optional.empty());
 
                 // when
-                ResultActions result = mockMvc.perform(get(basePath + "general-settings" + "/" + someId.toString())
+                ResultActions result = mockMvc.perform(get(basePath + "general-settings" + "/" + someKey)
                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
                 result.andExpect(status().isNotFound());
-                verify(mockRepository, times(1)).findById(someId);
+                verify(mockRepository, times(1)).findByKey(someKey);
         }
 
         @Test
@@ -122,12 +120,12 @@ class KnowledgeGeneralSettingApiTest {
                 // given
                 List<KnowledgeBaseGeneralSetting> list = new ArrayList<KnowledgeBaseGeneralSetting>();
                 list.add(generalSetting);
-                given(mockRepository.findByKey(any(), eq(PageRequest.of(0, 1))))
+                given(mockRepository.findAll(eq(PageRequest.of(0, 1))))
                                 .willReturn(new PageImpl<KnowledgeBaseGeneralSetting>(list));
 
                 // when
                 ResultActions result = mockMvc.perform(get(
-                                basePath + "general-settings" + "?page=0&size=1" + "&key=" + generalSetting.getKey())
+                                basePath + "general-settings" + "?page=0&size=1")
                                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
@@ -136,7 +134,7 @@ class KnowledgeGeneralSettingApiTest {
                                 .andExpect(jsonPath("$.results[0].key", is(generalSetting.getKey())))
                                 .andExpect(jsonPath("$.totalElements", is(1)));
 
-                verify(mockRepository, times(1)).findByKey(eq(generalSetting.getKey()), any(Pageable.class));
+                verify(mockRepository, times(1)).findAll(any(Pageable.class));
         }
 
         @Test
@@ -201,10 +199,10 @@ class KnowledgeGeneralSettingApiTest {
         @Test
         public void updateGeneralSettingNotFound() throws Exception {
                 // given
-                given(mockRepository.findByIdAndKey(any(), any())).willReturn(Optional.empty());
+                given(mockRepository.findByKey( generalSetting.getKey())).willReturn(Optional.empty());
 
                 // when
-                ResultActions result = mockMvc.perform(put(basePath + "general-settings" + "/" + generalSetting.getId())
+                ResultActions result = mockMvc.perform(put(basePath + "general-settings" + "/" + generalSetting.getKey())
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(
                                                 mm.map(generalSetting, KnowledgeBaseGeneralSettingDto.class)))
@@ -213,20 +211,20 @@ class KnowledgeGeneralSettingApiTest {
                 // then
                 result.andDo(print()).andExpect(status().isNotFound()).andExpect(jsonPath("$.status", is(404)))
                                 .andExpect(jsonPath("$.title",
-                                                is(new ResourceNotExistException(generalSetting.getId()).getReason())));
+                                                is(new ResourceNotExistException(generalSetting.getKey()).getReason())));
 
         }
 
         @Test
         public void updateGeneralSettingSuccessfully() throws Exception {
                 // given
-                given(mockRepository.findByIdAndKey(any(), any())).willReturn(Optional.of(generalSetting));
+                given(mockRepository.findByKey( generalSetting.getKey())).willReturn(Optional.of(generalSetting));
 
                 // when
                 KnowledgeBaseGeneralSettingDto requestDto = mm.map(generalSetting,
                                 KnowledgeBaseGeneralSettingDto.class);
                 requestDto.setValue("change value");
-                ResultActions result = mockMvc.perform(put(basePath + "general-settings" + "/" + generalSetting.getId())
+                ResultActions result = mockMvc.perform(put(basePath + "general-settings" + "/" + generalSetting.getKey())
                                 .contentType(APPLICATION_JSON_UTF8).content(om.writeValueAsString(requestDto))
                                 .accept(APPLICATION_JSON_UTF8));
 

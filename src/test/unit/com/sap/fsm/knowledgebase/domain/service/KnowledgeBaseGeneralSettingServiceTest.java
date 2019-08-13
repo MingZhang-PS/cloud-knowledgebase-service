@@ -31,7 +31,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
-import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,14 +49,13 @@ public class KnowledgeBaseGeneralSettingServiceTest {
     private static KnowledgeBaseGeneralSetting fakeSetting;
     private static KnowledgeBaseGeneralSettingDto requestDto;
     private static List<KnowledgeBaseGeneralSetting> fakeSettingList;
-    private static UUID someId = UUID.fromString("6f6c1b6e-0520-4a27-b37f-f34be2d964bf");
+    private static String someKey = "enabled";
 
     @BeforeAll
     public static void beforeAll() {
         fakeSetting = new KnowledgeBaseGeneralSetting();
-        fakeSetting.setKey("enabled");
+        fakeSetting.setKey(someKey);
         fakeSetting.setValue("false");
-        fakeSetting.setId(someId);
         fakeSetting.setLastChanged(new Date());
 
         fakeSettingList = new ArrayList<KnowledgeBaseGeneralSetting>();
@@ -70,33 +68,31 @@ public class KnowledgeBaseGeneralSettingServiceTest {
         requestDto =  new KnowledgeBaseGeneralSettingDto();
         requestDto.setKey(fakeSetting.getKey());
         requestDto.setValue(fakeSetting.getValue());
-        requestDto.setId(fakeSetting.getId());
         requestDto.setLastChanged(fakeSetting.getLastChanged());
     }
 
-    @DisplayName("Test knowledgeBaseGeneralSettingService get setting item by id successfully")
+    @DisplayName("Test knowledgeBaseGeneralSettingService get setting item by key successfully")
     @Test
-    void shouldGetSettingItemByIdSuccessfully() {
+    void shouldGetSettingItemByKeySuccessfully() {
         // given
-        given(mockRepository.findById(someId)).willReturn(Optional.of(fakeSetting));
+        given(mockRepository.findByKey(someKey)).willReturn(Optional.of(fakeSetting));
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
         // when
         KnowledgeBaseGeneralSettingDto findResult = knowledgeBaseGeneralSettingService
-                .findByKnowledgeBaseSettingId(someId);
+                .findByKnowledgeBaseSettingKey(someKey);
 
         // then
-        assertEquals(fakeSetting.getId(), findResult.getId());
         assertEquals(fakeSetting.getKey(), findResult.getKey());
         assertEquals(fakeSetting.getValue(), findResult.getValue());
     }
 
-    @DisplayName("Test knowledgeBaseGeneralSettingService get setting item by id fails due to resource not found")
+    @DisplayName("Test knowledgeBaseGeneralSettingService get setting item by key fails due to resource not found")
     @Test
-    void shouldGetSettingItemByIdNotFound() {
-        given(mockRepository.findById(someId)).willReturn(Optional.empty());
+    void shouldGetSettingItemByKeyNotFound() {
+        given(mockRepository.findByKey(someKey)).willReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
-            knowledgeBaseGeneralSettingService.findByKnowledgeBaseSettingId(someId);
+            knowledgeBaseGeneralSettingService.findByKnowledgeBaseSettingKey(someKey);
         });
     }
 
@@ -105,26 +101,25 @@ public class KnowledgeBaseGeneralSettingServiceTest {
     void shouldUpdateSettingItemSuccessfully() {
         // given  
         requestDto.setValue("Hello");
-        given(mockRepository.findByIdAndKey(someId, requestDto.getKey()))
+        given(mockRepository.findByKey( someKey))
                 .willReturn(Optional.of(fakeSetting));
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
         // when
         KnowledgeBaseGeneralSettingDto updateResult = knowledgeBaseGeneralSettingService
-                .updateByKnowledgeBaseSettingId(someId, requestDto);
+                .updateByKnowledgeBaseSettingKey(someKey, requestDto);
 
         // then
         assertEquals(requestDto.getValue(), updateResult.getValue());
         assertEquals(fakeSetting.getKey(), updateResult.getKey());
-        assertEquals(fakeSetting.getId(), updateResult.getId());
     }
 
     @DisplayName("Test knowledgeBaseGeneralSettingService update setting item fails due to resource not found")
     @Test
     void shouldUpdateSettingItemFailsNotFound() {
-        given(mockRepository.findByIdAndKey(someId, requestDto.getKey())).willReturn(Optional.empty());
+        given(mockRepository.findByKey( someKey)).willReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
-            knowledgeBaseGeneralSettingService.updateByKnowledgeBaseSettingId(someId, requestDto);
+            knowledgeBaseGeneralSettingService.updateByKnowledgeBaseSettingKey(someKey, requestDto);
         });
     }
 
@@ -145,7 +140,6 @@ public class KnowledgeBaseGeneralSettingServiceTest {
         // then
         assertEquals(fakeSetting.getValue(), saveResult.getValue());
         assertEquals(fakeSetting.getKey(), saveResult.getKey());
-        assertEquals(fakeSetting.getId(), saveResult.getId());
     }
 
     @DisplayName("Test knowledgeBaseGeneralSettingService create setting item fails due to key duplication")
@@ -168,7 +162,7 @@ public class KnowledgeBaseGeneralSettingServiceTest {
         given(modelMapper.map(any(), any())).willReturn(mappedGeneralSettings);
         // when
         PaginationRecord<KnowledgeBaseGeneralSettingDto> findResults = knowledgeBaseGeneralSettingService
-                .findKnowledgeBaseGeneralSettings("", PageRequest.of(0,1));
+                .findKnowledgeBaseGeneralSettings( PageRequest.of(0,1));
 
         // then
         assertEquals(0, findResults.getContent().size());

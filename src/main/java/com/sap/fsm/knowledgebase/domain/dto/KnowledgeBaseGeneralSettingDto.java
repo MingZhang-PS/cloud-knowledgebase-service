@@ -6,14 +6,12 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiModel;
 
 import java.util.Date;
-import java.util.UUID;
 import javax.validation.constraints.NotBlank;
 
 @ApiModel(value = "Knowledge base general setting dto model")
 @Data
 public class KnowledgeBaseGeneralSettingDto  {
-    @ApiModelProperty(value = "Unique identifier of the knowledge base general setting")
-    private UUID id;
+
 
     @ApiModelProperty(value = "Timestamp when knowledge base general setting was last changed")
     private Date lastChanged;

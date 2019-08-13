@@ -200,7 +200,7 @@ class KnowledgeBaseProviderTypeApiTest {
         // then
         result.andDo(print()).andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status", is(404)))
-        .andExpect(jsonPath("$.title", is(new ResourceNotExistException(providerType.getId()).getReason())));
+        .andExpect(jsonPath("$.title", is(new ResourceNotExistException(providerType.getId().toString()).getReason())));
 
         verify(mockRepository, times(0)).save(any());
     }

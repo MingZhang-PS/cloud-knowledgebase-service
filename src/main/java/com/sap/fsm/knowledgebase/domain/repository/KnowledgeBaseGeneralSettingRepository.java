@@ -13,7 +13,5 @@ import java.util.Optional;
 @Repository
 public interface KnowledgeBaseGeneralSettingRepository extends JpaRepository<KnowledgeBaseGeneralSetting, UUID> {
         Optional<KnowledgeBaseGeneralSetting> findByKey(String key);
-        Page<KnowledgeBaseGeneralSetting> findByKey(String key, Pageable pageable);     
-        Optional<KnowledgeBaseGeneralSetting> findByIdAndKey(UUID id, String key);
         Page<KnowledgeBaseGeneralSetting> findAll(Pageable pageable);
 }

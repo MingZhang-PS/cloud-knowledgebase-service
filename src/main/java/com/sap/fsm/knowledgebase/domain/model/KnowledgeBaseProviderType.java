@@ -39,6 +39,9 @@ public class KnowledgeBaseProviderType {
     @Length(max = 512)
     private String name;
 
+/*     @OneToOne(mappedBy = "providerType", fetch = FetchType.LAZY)
+    private KnowledgeBaseProviderConfiguration providerConfiguration; */
+ 
     @PrePersist
     @PreUpdate
     private void beforeUpdate() {

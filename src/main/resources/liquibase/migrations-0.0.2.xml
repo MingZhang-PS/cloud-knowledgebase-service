@@ -21,10 +21,10 @@
         providerType uuid not null,
         isActive boolean,
         adapterAuthType varchar(255),
-        adapterURL varchar(255),
+        adapterURL varchar(512),
         adapterCredential jsonb,
         siteAuthType varchar(255),
-        siteURL varchar(255),
+        siteURL varchar(512),
         siteCredential jsonb,
         primary key (id));
 
