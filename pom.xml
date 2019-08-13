@@ -25,6 +25,7 @@
         <lombok.version>1.16.16</lombok.version>
         <modelmapper.version>2.3.2</modelmapper.version>
         <hibernate-types.version>2.3.4</hibernate-types.version>
+        <gson.version>2.5</gson.version>
         <!-- CUSTOM STARTERS -->
         <starter-common.version>0.5.30</starter-common.version>
         <starter-logging.version>0.9.8</starter-logging.version>
@@ -32,7 +33,7 @@
         <starter-swagger.version>0.9.13</starter-swagger.version>
         <starter-tracing.version>0.9.17</starter-tracing.version>
         <starter-test.version>0.9.15</starter-test.version>
-        <starter-db.version>0.2.8</starter-db.version>
+        <starter-db.version>0.2.8</starter-db.version>      
     </properties>
 
 
@@ -98,7 +99,13 @@
             <groupId>com.vladmihalcea</groupId>
             <artifactId>hibernate-types-52</artifactId>
             <version>${hibernate-types.version}</version>
-        </dependency> 
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
