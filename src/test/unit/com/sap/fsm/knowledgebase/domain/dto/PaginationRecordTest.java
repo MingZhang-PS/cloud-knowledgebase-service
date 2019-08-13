@@ -15,26 +15,26 @@ import java.util.UUID;
 
 @Unit
 class PaginationRecordTest {
-    @DisplayName("test pagable KnowledgeBaseProviderTypeDto tranformation")
+    @DisplayName("test pagable ProviderTypeDto tranformation")
 	@Test
 	void shouldPaginationRecordBeConstructedWithGivenValues() {
         // given
-        List<KnowledgeBaseProviderTypeDto> contents = new ArrayList<KnowledgeBaseProviderTypeDto>();
-        KnowledgeBaseProviderTypeDto firstType = new KnowledgeBaseProviderTypeDto();
+        List<ProviderTypeDto> contents = new ArrayList<ProviderTypeDto>();
+        ProviderTypeDto firstType = new ProviderTypeDto();
         firstType.setId(UUID.fromString("684a6910-7510-4458-969f-71d2199695cc"));
         firstType.setCode("SAP-Native");
         contents.add(firstType);
-        KnowledgeBaseProviderTypeDto secondType = new KnowledgeBaseProviderTypeDto();
+        ProviderTypeDto secondType = new ProviderTypeDto();
         secondType.setId(UUID.fromString("d9afb0a4-5857-4c96-b690-50e36d06a380"));
         secondType.setCode("MindTouch");
         contents.add(secondType);
 
-        PageImpl<KnowledgeBaseProviderTypeDto> source = 
-        new PageImpl<KnowledgeBaseProviderTypeDto>(contents, PageRequest.of(0, 10),2 );
+        PageImpl<ProviderTypeDto> source = 
+        new PageImpl<ProviderTypeDto>(contents, PageRequest.of(0, 10),2 );
 
 		// when
-        PaginationRecord<KnowledgeBaseProviderTypeDto> providerTypes = 
-        new PaginationRecord<KnowledgeBaseProviderTypeDto>(source);
+        PaginationRecord<ProviderTypeDto> providerTypes = 
+        new PaginationRecord<ProviderTypeDto>(source);
 
 		// then
         assertThat(providerTypes.getContent()).isEqualTo(source.getContent());

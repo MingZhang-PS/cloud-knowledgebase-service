@@ -1,6 +1,6 @@
 package com.sap.fsm.knowledgebase.domain.repository;
 
-import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseProviderConfiguration;
+import com.sap.fsm.knowledgebase.domain.model.ProviderConfiguration;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,8 +11,8 @@ import java.util.UUID;
 import java.util.Optional;
 
 @Repository
-public interface KnowledgeBaseProviderConfigurationRepository extends JpaRepository<KnowledgeBaseProviderConfiguration, UUID> {
-        Optional<KnowledgeBaseProviderConfiguration> findByProviderType(UUID providerTypeId);      
+public interface ProviderConfigurationRepository extends JpaRepository<ProviderConfiguration, UUID> {
+        Optional<ProviderConfiguration> findByProviderType(UUID providerTypeId);      
         //Optional<KnowledgeBaseProviderConfiguration> findByIdAndProviderType(UUID id, UUID providerType);
-        Page<KnowledgeBaseProviderConfiguration> findAll(Pageable pageable);
+        Page<ProviderConfiguration> findAll(Pageable pageable);
 }

@@ -12,7 +12,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import java.util.Date;
@@ -25,7 +24,7 @@ import java.util.UUID;;
 })
 @Valid
 @Data
-public class KnowledgeBaseProviderConfiguration {
+public class ProviderConfiguration {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid2")

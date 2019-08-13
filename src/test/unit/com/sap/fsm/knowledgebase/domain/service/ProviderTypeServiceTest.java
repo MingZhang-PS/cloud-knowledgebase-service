@@ -1,8 +1,8 @@
 package com.sap.fsm.knowledgebase.domain.service;
 
-import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseProviderTypeDto;
-import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseProviderType;
-import com.sap.fsm.knowledgebase.domain.repository.KnowledgeBaseProviderTypeRepository;
+import com.sap.fsm.knowledgebase.domain.dto.ProviderTypeDto;
+import com.sap.fsm.knowledgebase.domain.model.ProviderType;
+import com.sap.fsm.knowledgebase.domain.repository.ProviderTypeRepository;
 import com.sap.fsm.knowledgebase.domain.exception.ResourceNotExistException;
 import com.sap.fsm.knowledgebase.domain.exception.ProviderTypePresentException;
 import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
@@ -37,44 +37,44 @@ import java.util.Date;
 import java.util.List;
 
 @Unit
-public class KnowledgeBaseProviderTypeServiceTest {
+public class ProviderTypeServiceTest {
     @Mock
     private ModelMapper modelMapper;
 
     @Mock
-    private KnowledgeBaseProviderTypeRepository mockRepository;
+    private ProviderTypeRepository mockRepository;
 
     @InjectMocks
-    private KnowledgeBaseProviderTypeService knowledgeBaseProviderTypeService;
+    private ProviderTypeService providerTypeService;
 
-    private static KnowledgeBaseProviderType fakeType;
-    private static KnowledgeBaseProviderTypeDto requestDto;
-    private static List<KnowledgeBaseProviderType> fakeTypeList;
+    private static ProviderType fakeType;
+    private static ProviderTypeDto requestDto;
+    private static List<ProviderType> fakeTypeList;
     private static UUID someId = UUID.fromString("6f6c1b6e-0520-4a27-b37f-f34be2d964bf");
 
     @BeforeAll
     public static void beforeAll() {
-        fakeType = new KnowledgeBaseProviderType();
+        fakeType = new ProviderType();
         fakeType.setCode("MindTouch");
         fakeType.setName("test");
         fakeType.setId(someId);
         fakeType.setLastChanged(new Date());
 
-        fakeTypeList = new ArrayList<KnowledgeBaseProviderType>();
+        fakeTypeList = new ArrayList<ProviderType>();
         fakeTypeList.add(fakeType);
     }
 
     @BeforeEach
     public void initMocks() throws JSONException {
         MockitoAnnotations.initMocks(this);
-        requestDto = new KnowledgeBaseProviderTypeDto();
+        requestDto = new ProviderTypeDto();
         requestDto.setCode(fakeType.getCode());
         requestDto.setName(fakeType.getName());
         requestDto.setId(fakeType.getId());
         requestDto.setLastChanged(fakeType.getLastChanged());
     }
 
-    @DisplayName("Test knowledgeBaseProviderTypeService get provider type by id successfully")
+    @DisplayName("Test ProviderTypeService get provider type by id successfully")
     @Test
     void shouldGetProviderTypeByIdSuccessfully() {
         // given
@@ -82,8 +82,8 @@ public class KnowledgeBaseProviderTypeServiceTest {
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
         // when
-        KnowledgeBaseProviderTypeDto findResult = knowledgeBaseProviderTypeService
-                .findByKnowledgeBaseProviderTypeId(someId);
+        ProviderTypeDto findResult = providerTypeService
+                .findByProviderTypeId(someId);
 
         // then
         assertEquals(fakeType.getCode(), findResult.getCode());
@@ -91,16 +91,16 @@ public class KnowledgeBaseProviderTypeServiceTest {
         assertEquals(fakeType.getName(), findResult.getName());
     }
 
-    @DisplayName("Test knowledgeBaseProviderTypeService get provider type by id fails due to resource not found")
+    @DisplayName("Test ProviderTypeService get provider type by id fails due to resource not found")
     @Test
     void shouldGetProviderTypeByIdNotFound() {
         given(mockRepository.findById(someId)).willReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
-            knowledgeBaseProviderTypeService.findByKnowledgeBaseProviderTypeId(someId);
+            providerTypeService.findByProviderTypeId(someId);
         });
     }
 
-    @DisplayName("Test knowledgeBaseProviderTypeService update provider type successfully")
+    @DisplayName("Test ProviderTypeService update provider type successfully")
     @Test
     void shouldUpdateProviderTypeSuccessfully() {
         // given
@@ -109,8 +109,8 @@ public class KnowledgeBaseProviderTypeServiceTest {
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
         // when
-        KnowledgeBaseProviderTypeDto updateResult = knowledgeBaseProviderTypeService
-                .updateByKnowledgeBaseProviderTypeId(someId, requestDto);
+        ProviderTypeDto updateResult = providerTypeService
+                .updateByProviderTypeId(someId, requestDto);
 
         // then
         assertEquals(requestDto.getName(), updateResult.getName());
@@ -118,26 +118,26 @@ public class KnowledgeBaseProviderTypeServiceTest {
         assertEquals(fakeType.getId(), updateResult.getId());
     }
 
-    @DisplayName("Test knowledgeBaseProviderTypeService update provider type fails due to resource not found")
+    @DisplayName("Test ProviderTypeService update provider type fails due to resource not found")
     @Test
     void shouldUpdateProviderTypeFailsNotFound() {
         given(mockRepository.findByIdAndCode(someId, requestDto.getCode())).willReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
-            knowledgeBaseProviderTypeService.updateByKnowledgeBaseProviderTypeId(someId, requestDto);
+            providerTypeService.updateByProviderTypeId(someId, requestDto);
         });
     }
 
-    @DisplayName("Test knowledgeBaseProviderTypeService create provider type successfully")
+    @DisplayName("Test ProviderTypeService create provider type successfully")
     @Test
     void shouldCreateProviderTypeSuccessfully() {
         // given
         given(mockRepository.findByCode(requestDto.getCode())).willReturn(Optional.empty());
         given(mockRepository.save(any())).willReturn(fakeType);
-        given(modelMapper.map(any(), eq(KnowledgeBaseProviderType.class))).willReturn(fakeType);
-        given(modelMapper.map(any(), eq(KnowledgeBaseProviderTypeDto.class))).willReturn(requestDto);
+        given(modelMapper.map(any(), eq(ProviderType.class))).willReturn(fakeType);
+        given(modelMapper.map(any(), eq(ProviderTypeDto.class))).willReturn(requestDto);
         // when
-        KnowledgeBaseProviderTypeDto saveResult = knowledgeBaseProviderTypeService
-                .createKnowledgeBaseProviderType(requestDto);
+        ProviderTypeDto saveResult = providerTypeService
+                .createProviderType(requestDto);
 
         // then
         assertEquals(fakeType.getName(), saveResult.getName());
@@ -145,31 +145,31 @@ public class KnowledgeBaseProviderTypeServiceTest {
         assertEquals(fakeType.getId(), saveResult.getId());
     }
 
-    @DisplayName("Test knowledgeBaseProviderTypeService create provider type fails due to code duplication")
+    @DisplayName("Test ProviderTypeService create provider type fails due to code duplication")
     @Test
     void shouldCreateProviderTypeFailsConflict() {
         given(mockRepository.findByCode(requestDto.getCode())).willReturn(Optional.of(fakeType));
         Assertions.assertThrows(ProviderTypePresentException.class, () -> {
-            knowledgeBaseProviderTypeService.createKnowledgeBaseProviderType(requestDto);
+            providerTypeService.createProviderType(requestDto);
         });
     }
 
-    @DisplayName("Test knowledgeBaseProviderTypeService return provider type list as empty list successfully")
+    @DisplayName("Test ProviderTypeService return provider type list as empty list successfully")
     @Test
     void shouldGetProviderTypesAsEmptyListSuccessfully() {
         // given
         given(mockRepository.findAll(any(Pageable.class)))
-                .willReturn(new PageImpl<KnowledgeBaseProviderType>(new ArrayList<KnowledgeBaseProviderType>()));
-        PaginationRecord<KnowledgeBaseProviderTypeDto> mappedProviders = new PaginationRecord<KnowledgeBaseProviderTypeDto>();
-        mappedProviders.setContent(new ArrayList<KnowledgeBaseProviderTypeDto>());
+                .willReturn(new PageImpl<ProviderType>(new ArrayList<ProviderType>()));
+        PaginationRecord<ProviderTypeDto> mappedProviders = new PaginationRecord<ProviderTypeDto>();
+        mappedProviders.setContent(new ArrayList<ProviderTypeDto>());
         given(modelMapper.map(any(), any())).willReturn(mappedProviders);
         // when
-        PaginationRecord<KnowledgeBaseProviderTypeDto> findResults = knowledgeBaseProviderTypeService
-                .findKnowledgeBaseProviderTypes(PageRequest.of(0, 1));
+        PaginationRecord<ProviderTypeDto> findResults = providerTypeService
+                .findProviderTypes(PageRequest.of(0, 1));
 
         // then
         assertEquals(0, findResults.getContent().size());
-        verify(modelMapper, times(1)).map(any(), eq(new PaginationRecord<KnowledgeBaseProviderTypeDto>().getClass()));
+        verify(modelMapper, times(1)).map(any(), eq(new PaginationRecord<ProviderTypeDto>().getClass()));
         verify(mockRepository, times(1)).findAll(PageRequest.of(0, 1));
     }
 }

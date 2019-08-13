@@ -14,7 +14,7 @@ import java.util.Date;
 @Table(name = "knowledgebasegeneralsetting")
 @Valid
 @Data
-public class KnowledgeBaseGeneralSetting {
+public class GeneralSetting {
     
     @Id
     @Column(name = "key", unique = true, nullable = false,  updatable = false)

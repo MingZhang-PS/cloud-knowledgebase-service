@@ -17,7 +17,7 @@ import java.util.Date;
 @Table(name = "knowledgebaseprovidertype")
 @Valid
 @Data
-public class KnowledgeBaseProviderType {
+public class ProviderType {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid2")

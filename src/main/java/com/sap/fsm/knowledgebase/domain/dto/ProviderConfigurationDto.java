@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "Knowledge base provider configuration dto model")
 @Data
-public class KnowledgeBaseProviderConfigurationDto  {
+public class ProviderConfigurationDto  {
     @ApiModelProperty(value = "Unique identifier of the knowledge base provider configuration")
     private UUID id;
 

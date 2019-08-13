@@ -1,10 +1,9 @@
 package com.sap.fsm.knowledgebase.infrastructure.api;
 
-import com.sap.fsm.knowledgebase.domain.repository.KnowledgeBaseProviderTypeRepository;
-import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseGeneralSetting;
-import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseProviderType;
+import com.sap.fsm.knowledgebase.domain.repository.ProviderTypeRepository;
+import com.sap.fsm.knowledgebase.domain.model.ProviderType;
 import com.sap.fsm.springboot.starter.test.annotation.Integration;
-import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseProviderTypeDto;
+import com.sap.fsm.knowledgebase.domain.dto.ProviderTypeDto;
 import com.sap.fsm.knowledgebase.domain.exception.ProviderTypePresentException;
 import com.sap.fsm.knowledgebase.domain.exception.ResourceNotExistException;
 
@@ -50,20 +49,20 @@ class KnowledgeBaseProviderTypeApiTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private KnowledgeBaseProviderTypeRepository mockRepository;
+    private ProviderTypeRepository mockRepository;
 
     // @Value("${application.name}")
     // private String applicationName;
 
     private UUID someId = UUID.fromString("9049529f-f6f2-4881-87b3-bcbc4ab3f886");
     private String basePath = "/api/knowledge-base/v1/";
-    private KnowledgeBaseProviderType providerType;
+    private ProviderType providerType;
     private static final ObjectMapper om = new ObjectMapper();
     private static final ModelMapper mm = new ModelMapper();
 
     @BeforeEach
     void initTestCase() {
-        providerType = new KnowledgeBaseProviderType();
+        providerType = new ProviderType();
         providerType.setId(someId);
         providerType.setCode("SomeFamousKB");
         providerType.setLastChanged(new Date());
@@ -104,7 +103,7 @@ class KnowledgeBaseProviderTypeApiTest {
     public void findProviderTypesEmpty() throws Exception {
         // given
         given(mockRepository.findAll(PageRequest.of(0, 1)))
-                .willReturn(new PageImpl<KnowledgeBaseProviderType>(new ArrayList<KnowledgeBaseProviderType>()));
+                .willReturn(new PageImpl<ProviderType>(new ArrayList<ProviderType>()));
 
         // when
         ResultActions result = mockMvc
@@ -120,9 +119,9 @@ class KnowledgeBaseProviderTypeApiTest {
     @Test
     public void findProviderTypesNotEmpty() throws Exception {
         // given
-        List<KnowledgeBaseProviderType> list = new ArrayList<KnowledgeBaseProviderType>();
+        List<ProviderType> list = new ArrayList<ProviderType>();
         list.add(providerType);
-        given(mockRepository.findAll(PageRequest.of(0, 1))).willReturn(new PageImpl<KnowledgeBaseProviderType>(list));
+        given(mockRepository.findAll(PageRequest.of(0, 1))).willReturn(new PageImpl<ProviderType>(list));
 
         // when
         ResultActions result = mockMvc
@@ -142,7 +141,7 @@ class KnowledgeBaseProviderTypeApiTest {
 
         // when
         ResultActions result = mockMvc.perform(post(basePath + "provider-types").contentType(APPLICATION_JSON_UTF8)
-                .content(om.writeValueAsString(mm.map(providerType, KnowledgeBaseProviderTypeDto.class))).accept(APPLICATION_JSON_UTF8));
+                .content(om.writeValueAsString(mm.map(providerType, ProviderTypeDto.class))).accept(APPLICATION_JSON_UTF8));
 
         // then
         result.andExpect(status().isBadRequest());
@@ -158,7 +157,7 @@ class KnowledgeBaseProviderTypeApiTest {
         // when
         ResultActions result = mockMvc
                 .perform(post(basePath + "provider-types" ).contentType(APPLICATION_JSON_UTF8)
-                .content(om.writeValueAsString(mm.map(providerType, KnowledgeBaseProviderTypeDto.class))).accept(APPLICATION_JSON_UTF8));
+                .content(om.writeValueAsString(mm.map(providerType, ProviderTypeDto.class))).accept(APPLICATION_JSON_UTF8));
 
         // then
         result.andDo(print()).andExpect(status().isConflict())
@@ -172,12 +171,12 @@ class KnowledgeBaseProviderTypeApiTest {
     public void createProviderTypeSuccessfully() throws Exception {
         // given
         given(mockRepository.findByCode(providerType.getCode())).willReturn(Optional.empty());
-        given(mockRepository.save(any(KnowledgeBaseProviderType.class))).willReturn(providerType);
+        given(mockRepository.save(any(ProviderType.class))).willReturn(providerType);
 
         // when
         ResultActions result = mockMvc
                 .perform(post(basePath + "provider-types" ).contentType(APPLICATION_JSON_UTF8)
-                .content(om.writeValueAsString(mm.map(providerType, KnowledgeBaseProviderTypeDto.class))).accept(APPLICATION_JSON_UTF8));
+                .content(om.writeValueAsString(mm.map(providerType, ProviderTypeDto.class))).accept(APPLICATION_JSON_UTF8));
 
         // then
         result.andDo(print()).andExpect(status().isOk())
@@ -195,7 +194,7 @@ class KnowledgeBaseProviderTypeApiTest {
         // when
         ResultActions result = mockMvc
                 .perform(put(basePath + "provider-types" + "/" + providerType.getId() ).contentType(APPLICATION_JSON_UTF8)
-                .content(om.writeValueAsString(mm.map(providerType, KnowledgeBaseProviderTypeDto.class))).accept(APPLICATION_JSON_UTF8));
+                .content(om.writeValueAsString(mm.map(providerType, ProviderTypeDto.class))).accept(APPLICATION_JSON_UTF8));
 
         // then
         result.andDo(print()).andExpect(status().isNotFound())
@@ -211,7 +210,7 @@ class KnowledgeBaseProviderTypeApiTest {
         given(mockRepository.findByIdAndCode(any(), any())).willReturn(Optional.of(providerType));
 
         // when
-        KnowledgeBaseProviderTypeDto requestDto =  mm.map(providerType, KnowledgeBaseProviderTypeDto.class);
+        ProviderTypeDto requestDto =  mm.map(providerType, ProviderTypeDto.class);
         requestDto.setName("change name");
         ResultActions result = mockMvc
                 .perform(put(basePath + "provider-types" + "/" + providerType.getId() ).contentType(APPLICATION_JSON_UTF8)
