@@ -27,7 +27,8 @@ public class KnowledgeBaseArticleLinkageService {
     private final KnowledgeBaseArticleLinkageRepository articleLinkageRepository;
 
     @Autowired
-    public KnowledgeBaseArticleLinkageService(ModelMapper modelMapper, KnowledgeBaseArticleLinkageRepository articleLinkageRepository) {
+    public KnowledgeBaseArticleLinkageService(ModelMapper modelMapper,
+                                              KnowledgeBaseArticleLinkageRepository articleLinkageRepository) {
         this.modelMapper = modelMapper;
         this.articleLinkageRepository = articleLinkageRepository;
     }
@@ -35,12 +36,14 @@ public class KnowledgeBaseArticleLinkageService {
     // Create Article Linkage
     public KnowledgeBaseArticleLinkageDto createArticleLinkage(KnowledgeBaseArticleLinkageDto articleLinkageDto) {
         if (null != articleLinkageDto.getId() && articleLinkageRepository.existsById(articleLinkageDto.getId())) {
-            final String errorMsg = String.format("ArticleLinkage already present for id: %s", articleLinkageDto.getId().toString());
+            final String errorMsg = String.format("ArticleLinkage already present for id: %s",
+                    articleLinkageDto.getId().toString());
             logger.error(errorMsg);
             throw new ArticleLinkageExistException(errorMsg);
         }
 
-        KnowledgeBaseArticleLinkage requestedLinkageModel = this.modelMapper.map(articleLinkageDto, KnowledgeBaseArticleLinkage.class);
+        KnowledgeBaseArticleLinkage requestedLinkageModel = this.modelMapper.map(articleLinkageDto,
+                KnowledgeBaseArticleLinkage.class);
         KnowledgeBaseArticleLinkage responseLinkageModel = this.articleLinkageRepository.save(requestedLinkageModel);
         return this.modelMapper.map(responseLinkageModel, KnowledgeBaseArticleLinkageDto.class);
     }
@@ -62,22 +65,20 @@ public class KnowledgeBaseArticleLinkageService {
                                                                                                      String objectId,
                                                                                                      Pageable pageable) {
         Page<KnowledgeBaseArticleLinkageDto> results =
-                this.articleLinkageRepository.findByObjectTypeAndObjectId(objectType, objectId, pageable).map(result -> {
-                    return this.modelMapper.map(result, KnowledgeBaseArticleLinkageDto.class);
-                });
+                this.articleLinkageRepository.findByObjectTypeAndObjectId(objectType, objectId, pageable).
+                        map(result -> { return this.modelMapper.map(result, KnowledgeBaseArticleLinkageDto.class);});
 
         return new PaginationRecord<KnowledgeBaseArticleLinkageDto>(results);
     }
 
     // Retrieve Article Linkage by ArticleId and ProviderType
     @Transactional(readOnly = true)
-    public PaginationRecord<KnowledgeBaseArticleLinkageDto> retrieveArticleLinkeageByProviderTypeAndArticleId(String providerType,
+    public PaginationRecord<KnowledgeBaseArticleLinkageDto> retrieveArticleLinkagesByProviderTypeAndArticleId(String providerType,
                                                                                                               String articleId,
                                                                                                               Pageable pageable) {
         Page<KnowledgeBaseArticleLinkageDto> results =
-                this.articleLinkageRepository.findByProviderTypeAndArticleId(providerType, articleId, pageable).map(result -> {
-                    return this.modelMapper.map(result, KnowledgeBaseArticleLinkageDto.class);
-                });
+                this.articleLinkageRepository.findByProviderTypeAndArticleId(providerType, articleId, pageable).
+                        map(result -> { return this.modelMapper.map(result, KnowledgeBaseArticleLinkageDto.class);});
 
         return new PaginationRecord<KnowledgeBaseArticleLinkageDto>(results);
     }
@@ -85,7 +86,8 @@ public class KnowledgeBaseArticleLinkageService {
 
     // Retrieve Article Linkage by ArticleId
     @Transactional(readOnly = true)
-    public PaginationRecord<KnowledgeBaseArticleLinkageDto> retrieveArticleLinkagesByArticleId(String articleId, Pageable pageable) {
+    public PaginationRecord<KnowledgeBaseArticleLinkageDto> retrieveArticleLinkagesByArticleId(String articleId,
+                                                                                               Pageable pageable) {
         Page<KnowledgeBaseArticleLinkageDto> results =
                 this.articleLinkageRepository.findByArticleId(articleId, pageable).map(result -> {
                     return this.modelMapper.map(result, KnowledgeBaseArticleLinkageDto.class);

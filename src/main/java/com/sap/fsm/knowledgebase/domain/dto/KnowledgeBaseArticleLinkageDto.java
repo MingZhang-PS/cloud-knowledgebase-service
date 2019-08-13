@@ -12,15 +12,15 @@ public class KnowledgeBaseArticleLinkageDto {
     @ApiModelProperty(value = "Id of Knowledge Base article linkage dto model")
     private UUID id;
 
-    @ApiModelProperty(value = "articleId of Knowledge Base article linkage dto model")
+    @ApiModelProperty(value = "articleId of Knowledge Base article linkage dto model", required = true)
     private String articleId;
 
-    @ApiModelProperty(value = "providerType of Knowledge Base article linkage dto model")
+    @ApiModelProperty(value = "providerType of Knowledge Base article linkage dto model", required = true)
     private String providerType;
 
-    @ApiModelProperty(value = "objectType of Knowledge Base article linkage dto model")
+    @ApiModelProperty(value = "objectType of Knowledge Base article linkage dto model", required = true)
     private String objectType;
 
-    @ApiModelProperty(value = "objectId Knowledge Base article linkage dto model")
+    @ApiModelProperty(value = "objectId Knowledge Base article linkage dto model", required = true)
     private String objectId;
 }
