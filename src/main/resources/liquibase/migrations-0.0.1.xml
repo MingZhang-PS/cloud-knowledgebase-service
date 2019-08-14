@@ -15,19 +15,17 @@
     <comment>Create KnowledgeBaseGeneralSetting table if not exists</comment>
     <sql>
       create table ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting
-      ( id uuid not null,
+      ( 
         lastChanged timestamp, 
         
         key varchar(255) not null,
         value varchar(255),
-        primary key (id));
+        primary key (key));
       
-      insert into ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting(id, lastchanged, key, value) 
-        values ('1485ee85-2e04-4110-bf83-6d7281722bef', NOW(), 'enabled', '');
+      insert into ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting(lastchanged, key, value) 
+        values (NOW(), 'enabled', '');
 
 
-      alter table if exists ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting
-            add constraint key_idx unique (key);
     </sql>
   </changeSet>
 

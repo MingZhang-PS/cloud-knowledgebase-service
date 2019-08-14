@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 
 @ApiModel(value = "Knowledge base provider type dto model")
 @Data
-public class KnowledgeBaseProviderTypeDto  {
+public class ProviderTypeDto  {
     @ApiModelProperty(value = "Unique identifier of the knowledge base provider type")
     private UUID id;
 

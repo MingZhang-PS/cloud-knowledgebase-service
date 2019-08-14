@@ -19,3 +19,8 @@ spring:
           page-parameter: page
           size-parameter: size
           sort-parameter: orderBy
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE

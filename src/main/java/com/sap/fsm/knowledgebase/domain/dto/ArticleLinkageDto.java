@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @ApiModel(value = "Knowledge Base article linkage dto model")
 @Data
-public class KnowledgeBaseArticleLinkageDto {
+public class ArticleLinkageDto {
     @ApiModelProperty(value = "Id of Knowledge Base article linkage dto model")
     private UUID id;
 

@@ -1,11 +1,11 @@
 package com.sap.fsm.knowledgebase.domain.service;
 
-import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseArticleLinkageDto;
+import com.sap.fsm.knowledgebase.domain.dto.ArticleLinkageDto;
 import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
 import com.sap.fsm.knowledgebase.domain.exception.ArticleLinkageExistException;
 import com.sap.fsm.knowledgebase.domain.exception.ArticleLinkageNotExistException;
-import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseArticleLinkage;
-import com.sap.fsm.knowledgebase.domain.repository.KnowledgeBaseArticleLinkageRepository;
+import com.sap.fsm.knowledgebase.domain.model.ArticleLinkage;
+import com.sap.fsm.knowledgebase.domain.repository.ArticleLinkageRepository;
 import com.sap.fsm.springboot.starter.test.annotation.Unit;
 import org.junit.Before;
 import org.junit.Rule;
@@ -31,15 +31,15 @@ import static org.junit.Assert.assertEquals;
 
 
 @Unit
-public class KnowledgeBaseArticleLinkageServiceTest {
+public class ArticleLinkageServiceTest {
     @Mock
-    private KnowledgeBaseArticleLinkageRepository articleLinkageRepository;
+    private ArticleLinkageRepository articleLinkageRepository;
 
     @Mock
     private ModelMapper modelMapper;
 
     @InjectMocks
-    KnowledgeBaseArticleLinkageService articleLinkageService;
+    ArticleLinkageService articleLinkageService;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -52,28 +52,28 @@ public class KnowledgeBaseArticleLinkageServiceTest {
     @Test
     public void createArticleLinkageForOk() {
         // Mock
-        KnowledgeBaseArticleLinkageDto articleLinkageDto =
-                new KnowledgeBaseArticleLinkageDto();
+        ArticleLinkageDto articleLinkageDto =
+                new ArticleLinkageDto();
         articleLinkageDto.setId(UUID.randomUUID());
 
-        KnowledgeBaseArticleLinkage articleLinkageModel =
-                new KnowledgeBaseArticleLinkage();
+        ArticleLinkage articleLinkageModel =
+                new ArticleLinkage();
 
-        when(modelMapper.map(articleLinkageDto, KnowledgeBaseArticleLinkage.class)).thenReturn(articleLinkageModel);
+        when(modelMapper.map(articleLinkageDto, ArticleLinkage.class)).thenReturn(articleLinkageModel);
         when(articleLinkageRepository.save(articleLinkageModel)).thenReturn(articleLinkageModel);
         when(articleLinkageRepository.existsById(articleLinkageDto.getId())).thenReturn(false);
-        when(modelMapper.map(articleLinkageModel, KnowledgeBaseArticleLinkageDto.class)).thenReturn(articleLinkageDto);
+        when(modelMapper.map(articleLinkageModel, ArticleLinkageDto.class)).thenReturn(articleLinkageDto);
 
         // Test
-        KnowledgeBaseArticleLinkageDto result = articleLinkageService.createArticleLinkage(articleLinkageDto);
+        ArticleLinkageDto result = articleLinkageService.createArticleLinkage(articleLinkageDto);
         assertEquals(result.getId(), articleLinkageDto.getId());
         verify(articleLinkageRepository, times(1)).save(articleLinkageModel);
     }
 
     @Test
     public void createArticleLinkageForFail() throws ArticleLinkageExistException {
-        KnowledgeBaseArticleLinkageDto articleLinkageDto =
-                new KnowledgeBaseArticleLinkageDto();
+        ArticleLinkageDto articleLinkageDto =
+                new ArticleLinkageDto();
         articleLinkageDto.setId(UUID.randomUUID());
         when(articleLinkageRepository.existsById(articleLinkageDto.getId())).thenReturn(true);
 
@@ -100,7 +100,7 @@ public class KnowledgeBaseArticleLinkageServiceTest {
         when(articleLinkageRepository.existsById(id)).thenReturn(false);
 
         thrown.expect(ArticleLinkageNotExistException.class);
-        thrown.expectMessage(new ArticleLinkageNotExistException(id).getMessage());
+        thrown.expectMessage(new ArticleLinkageNotExistException(id.toString()).getMessage());
 
         articleLinkageService.deleteArticleLinkageById(id);
     }
@@ -110,14 +110,14 @@ public class KnowledgeBaseArticleLinkageServiceTest {
         String objectType = "Case", objectId = "case_1";
         Pageable pageable = PageRequest.of(0, 10);
 
-        List<KnowledgeBaseArticleLinkage> modelContent =
-                new ArrayList<KnowledgeBaseArticleLinkage>(0);
-        Page<KnowledgeBaseArticleLinkage> page =
-                new PageImpl<KnowledgeBaseArticleLinkage>(modelContent);
+        List<ArticleLinkage> modelContent =
+                new ArrayList<ArticleLinkage>(0);
+        Page<ArticleLinkage> page =
+                new PageImpl<ArticleLinkage>(modelContent);
         when(articleLinkageRepository.findByObjectTypeAndObjectId(objectType, objectId, pageable)).thenReturn(page);
 
 
-        PaginationRecord<KnowledgeBaseArticleLinkageDto> result =
+        PaginationRecord<ArticleLinkageDto> result =
                 articleLinkageService.retrieveArticleLinkagesByObjectIDAndType(objectType, objectId, pageable);
 
         verify(articleLinkageRepository, times(1)).
@@ -131,13 +131,13 @@ public class KnowledgeBaseArticleLinkageServiceTest {
         String providerType = "MindTouch", articleId = "case_1";
         Pageable pageable = PageRequest.of(0, 10);
 
-        List<KnowledgeBaseArticleLinkage> modelContent =
-                new ArrayList<KnowledgeBaseArticleLinkage>(0);
-        Page<KnowledgeBaseArticleLinkage> page =
-                new PageImpl<KnowledgeBaseArticleLinkage>(modelContent);
+        List<ArticleLinkage> modelContent =
+                new ArrayList<ArticleLinkage>(0);
+        Page<ArticleLinkage> page =
+                new PageImpl<ArticleLinkage>(modelContent);
         when(articleLinkageRepository.findByProviderTypeAndArticleId(providerType, articleId, pageable)).thenReturn(page);
 
-        PaginationRecord<KnowledgeBaseArticleLinkageDto> result =
+        PaginationRecord<ArticleLinkageDto> result =
                 articleLinkageService.retrieveArticleLinkagesByProviderTypeAndArticleId(providerType, articleId, pageable);
 
         verify(articleLinkageRepository, times(1)).
@@ -151,13 +151,13 @@ public class KnowledgeBaseArticleLinkageServiceTest {
         String articleId = "case_1";
         Pageable pageable = PageRequest.of(0, 10);
 
-        List<KnowledgeBaseArticleLinkage> modelContent =
-                new ArrayList<KnowledgeBaseArticleLinkage>(0);
-        Page<KnowledgeBaseArticleLinkage> page =
-                new PageImpl<KnowledgeBaseArticleLinkage>(modelContent);
+        List<ArticleLinkage> modelContent =
+                new ArrayList<ArticleLinkage>(0);
+        Page<ArticleLinkage> page =
+                new PageImpl<ArticleLinkage>(modelContent);
         when(articleLinkageRepository.findByArticleId(articleId, pageable)).thenReturn(page);
 
-        PaginationRecord<KnowledgeBaseArticleLinkageDto> result =
+        PaginationRecord<ArticleLinkageDto> result =
                 articleLinkageService.retrieveArticleLinkagesByArticleId(articleId, pageable);
 
         verify(articleLinkageRepository, times(1)).

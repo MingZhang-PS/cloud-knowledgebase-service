@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.sap.fsm.knowledgebase.domain.model.KnowledgeBaseArticleLinkage;
-import com.sap.fsm.knowledgebase.domain.repository.KnowledgeBaseArticleLinkageRepository;
-import com.sap.fsm.knowledgebase.domain.dto.KnowledgeBaseArticleLinkageDto;
+import com.sap.fsm.knowledgebase.domain.model.ArticleLinkage;
+import com.sap.fsm.knowledgebase.domain.repository.ArticleLinkageRepository;
+import com.sap.fsm.knowledgebase.domain.dto.ArticleLinkageDto;
 import com.sap.fsm.springboot.starter.test.annotation.Integration;
 
 import org.junit.jupiter.api.*;
@@ -32,15 +32,15 @@ public class KnowledgeBaseArticleLinkageApiTest {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
     private final ModelMapper modelMapper;
-    private final KnowledgeBaseArticleLinkageRepository articleLinkageRepository;
-    private KnowledgeBaseArticleLinkageDto articleLinkageDto;
+    private final ArticleLinkageRepository articleLinkageRepository;
+    private ArticleLinkageDto articleLinkageDto;
     private UUID articleLinkageId;
 
     @Autowired
     public KnowledgeBaseArticleLinkageApiTest(MockMvc mockMvc,
                                               ObjectMapper objectMapper,
                                               ModelMapper modelMapper,
-                                              KnowledgeBaseArticleLinkageRepository articleLinkageRepository) {
+                                              ArticleLinkageRepository articleLinkageRepository) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
         this.modelMapper = modelMapper;
@@ -59,8 +59,8 @@ public class KnowledgeBaseArticleLinkageApiTest {
 
     private UUID addNewArticleLinkageToDB() {
         if (null != this.articleLinkageDto) {
-            KnowledgeBaseArticleLinkage articleLinkageModel =
-                    this.modelMapper.map(this.articleLinkageDto, KnowledgeBaseArticleLinkage.class);
+            ArticleLinkage articleLinkageModel =
+                    this.modelMapper.map(this.articleLinkageDto, ArticleLinkage.class);
             articleLinkageModel = this.articleLinkageRepository.save(articleLinkageModel);
 
             return articleLinkageModel.getId();
@@ -73,12 +73,12 @@ public class KnowledgeBaseArticleLinkageApiTest {
         return this.articleLinkageRepository.existsById(articleLinkageId);
     }
 
-    private KnowledgeBaseArticleLinkageDto createArticleLinkageDto(String providerType,
-                                                                   String articleId,
-                                                                   String objectType,
-                                                                   String objectId) {
-        KnowledgeBaseArticleLinkageDto articleLinkageDto =
-                new KnowledgeBaseArticleLinkageDto();
+    private ArticleLinkageDto createArticleLinkageDto(String providerType,
+                                                      String articleId,
+                                                      String objectType,
+                                                      String objectId) {
+        ArticleLinkageDto articleLinkageDto =
+                new ArticleLinkageDto();
 
         articleLinkageDto.setProviderType(providerType);
         articleLinkageDto.setArticleId(articleId);
@@ -89,30 +89,30 @@ public class KnowledgeBaseArticleLinkageApiTest {
     }
 
     private int prepareRetrievedData(int initialCapacity) {
-        List<KnowledgeBaseArticleLinkage> articleLinkageDtoList =
+        List<ArticleLinkage> articleLinkageDtoList =
                 new ArrayList<>(initialCapacity);
         int nIndex = 0;
-        KnowledgeBaseArticleLinkage articleLinkageModel = null;
+        ArticleLinkage articleLinkageModel = null;
         while (nIndex++ < initialCapacity) {
             articleLinkageModel = this.modelMapper.map(this.createArticleLinkageDto(
                     "MindTouch",
                     "article_" + nIndex,
                     "Case",
-                    "case_" + nIndex), KnowledgeBaseArticleLinkage.class);
+                    "case_" + nIndex), ArticleLinkage.class);
             articleLinkageDtoList.add(articleLinkageModel);
 
             articleLinkageModel = this.modelMapper.map(this.createArticleLinkageDto(
                     "SAP-Native",
                     "article_" + nIndex,
                     "Case",
-                    "case_" + nIndex), KnowledgeBaseArticleLinkage.class);
+                    "case_" + nIndex), ArticleLinkage.class);
             articleLinkageDtoList.add(articleLinkageModel);
 
             articleLinkageModel = this.modelMapper.map(this.createArticleLinkageDto(
                     "SAP-Native",
                     "article_" + nIndex,
                     "ServiceMoments",
-                    "serviceMoments_" + nIndex), KnowledgeBaseArticleLinkage.class);
+                    "serviceMoments_" + nIndex), ArticleLinkage.class);
             articleLinkageDtoList.add(articleLinkageModel);
         }
         this.articleLinkageRepository.saveAll(articleLinkageDtoList);
@@ -148,8 +148,8 @@ public class KnowledgeBaseArticleLinkageApiTest {
                 andExpect(status().isCreated()).
                 andReturn();
 
-        final KnowledgeBaseArticleLinkageDto resultDto =
-                this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), KnowledgeBaseArticleLinkageDto.class);
+        final ArticleLinkageDto resultDto =
+                this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ArticleLinkageDto.class);
         assertThat(resultDto.getId()).isNotNull();
         this.articleLinkageId = resultDto.getId();
 

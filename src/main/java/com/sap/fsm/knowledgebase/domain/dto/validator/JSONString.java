@@ -11,11 +11,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({FIELD})
 @Retention(RUNTIME)
-@Constraint(validatedBy = AuthTypeValidator.class)
+@Constraint(validatedBy = JSONStringValidator.class)
 @Documented
-public @interface AuthType {
+public @interface JSONString {
 
-    String message() default "Authentication type is not allowed";
+    String message() default "Non-JSON string type is not allowed";
 
     Class<?>[] groups() default {};
 

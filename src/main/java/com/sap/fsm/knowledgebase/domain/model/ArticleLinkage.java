@@ -11,7 +11,7 @@ import java.util.UUID;
 @Valid
 @Data
 @Entity(name = "knowledgebasearticlelinkage")
-public class KnowledgeBaseArticleLinkage {
+public class ArticleLinkage {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid2")
