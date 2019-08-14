@@ -12,7 +12,8 @@ import java.util.Optional;
 
 @Repository
 public interface ProviderConfigurationRepository extends JpaRepository<ProviderConfiguration, UUID> {
-        Optional<ProviderConfiguration> findByProviderType(UUID providerTypeId);      
+        Optional<ProviderConfiguration> findByProviderType(UUID providerTypeId); 
+        boolean existsByIsActive(Boolean isActive);  
         //Optional<KnowledgeBaseProviderConfiguration> findByIdAndProviderType(UUID id, UUID providerType);
         Page<ProviderConfiguration> findAll(Pageable pageable);
 }

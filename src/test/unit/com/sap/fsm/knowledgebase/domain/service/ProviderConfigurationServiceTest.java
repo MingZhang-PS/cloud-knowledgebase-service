@@ -5,6 +5,7 @@ import com.sap.fsm.knowledgebase.domain.model.ProviderType;
 import com.sap.fsm.knowledgebase.domain.repository.ProviderConfigurationRepository;
 import com.sap.fsm.knowledgebase.domain.repository.ProviderTypeRepository;
 import com.sap.fsm.knowledgebase.domain.exception.ResourceNotExistException;
+import com.sap.fsm.knowledgebase.domain.exception.OtherActiveConfigurationPresentException;
 import com.sap.fsm.knowledgebase.domain.exception.ProviderConfigurationPresentException;
 import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
 import com.sap.fsm.knowledgebase.domain.dto.ProviderConfigurationDto;
@@ -62,7 +63,7 @@ public class ProviderConfigurationServiceTest {
     public static void beforeAll() {
         fakeProviderConfig = new ProviderConfiguration();
         fakeProviderConfig.setId(someId);
-        fakeProviderConfig.setIsActive(false);
+        fakeProviderConfig.setIsActive(true);
         fakeProviderConfig.setLastChanged(new Date());
         fakeProviderConfig.setProviderType(providerTypeId);
         fakeProviderConfig.setAdapterAuthType("Basic");
@@ -140,6 +141,7 @@ public class ProviderConfigurationServiceTest {
         // given
         given(mockProviderTypeRepository.findById(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType()));
         given(mockProviderConfigurationRepository.findByProviderType(any())).willReturn(Optional.empty());
+        given(mockProviderConfigurationRepository.existsByIsActive(any())).willReturn(false);
         given(modelMapper.map(any(), eq(ProviderConfiguration.class))).willReturn(fakeProviderConfig);
         given(modelMapper.map(any(), eq(ProviderConfigurationDto.class))).willReturn(requestDto);
         given(mockProviderConfigurationRepository.save(any())).willReturn(fakeProviderConfig);
@@ -184,6 +186,23 @@ public class ProviderConfigurationServiceTest {
         verify(mockProviderConfigurationRepository, times(0)).save(any());
     }
 
+    @DisplayName("Test ProviderConfigurationService create provider configuration fails due to another provider configuration activated")
+    @Test
+    void shouldCreateProviderConfigurationFailsOtherConfigurationActivated() {
+        // given
+        given(mockProviderTypeRepository.findById(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType()) );
+        given(mockProviderConfigurationRepository.findByProviderType(requestDto.getProviderType())).willReturn(Optional.empty() );
+        given(mockProviderConfigurationRepository.existsByIsActive(true)).willReturn(true );
+        // when
+
+        // then
+        Assertions.assertThrows(OtherActiveConfigurationPresentException.class, () -> {
+            providerConfigurationService
+                .createProviderConfiguration(requestDto);
+        });
+        verify(mockProviderConfigurationRepository, times(0)).save(any());
+    }
+
     
     @DisplayName("Test ProviderConfigurationService update provider configuration fails due to provider type code invalid")
     @Test
@@ -206,7 +225,7 @@ public class ProviderConfigurationServiceTest {
         // given
         given(mockProviderTypeRepository.findById(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType())) ;
         given(mockProviderConfigurationRepository.findById(providerTypeId)).willReturn(Optional.empty() );
-
+        
         // when
 
         // then
@@ -223,6 +242,7 @@ public class ProviderConfigurationServiceTest {
         // given
         given(mockProviderTypeRepository.findById(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType())) ;
         given(mockProviderConfigurationRepository.findById(any())).willReturn(Optional.of(fakeProviderConfig) );
+        given(mockProviderConfigurationRepository.existsByIsActive(true)).willReturn(false );
         given(modelMapper.map(any(), eq(ProviderConfigurationDto.class))).willReturn(requestDto);
         // when
         ProviderConfigurationDto savedConfig = providerConfigurationService.updateProviderConfiguration(requestDto.getId(), requestDto);

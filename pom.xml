@@ -25,7 +25,7 @@
         <lombok.version>1.16.16</lombok.version>
         <modelmapper.version>2.3.2</modelmapper.version>
         <hibernate-types.version>2.3.4</hibernate-types.version>
-        <gson.version>2.5</gson.version>
+        <gson.version>2.6.2</gson.version>
         <!-- CUSTOM STARTERS -->
         <starter-common.version>0.5.30</starter-common.version>
         <starter-logging.version>0.9.8</starter-logging.version>

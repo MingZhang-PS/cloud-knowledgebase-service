@@ -49,6 +49,10 @@ public class ProviderConfigurationService {
             throw new ProviderConfigurationPresentException(result.getProviderType().toString());
         });
 
+        if (requestDto.getIsActive() && providerConfigurationRepository.existsByIsActive(true)) {
+                throw new OtherActiveConfigurationPresentException();   
+        }
+  
         ProviderConfiguration config = modelMapper.map(requestDto,
                 ProviderConfiguration.class);
         ProviderConfiguration savedConfig = providerConfigurationRepository.save(config);
@@ -65,6 +69,10 @@ public class ProviderConfigurationService {
                 .findById(id).orElseThrow(() -> 
                     new ResourceNotExistException(id.toString())
         );
+
+        if (requestDto.getIsActive() && providerConfigurationRepository.existsByIsActive(true)) {
+                throw new OtherActiveConfigurationPresentException();   
+        }
 
         config.setAdapterAuthType(requestDto.getAdapterAuthType());
         config.setAdapterURL(requestDto.getAdapterURL());

@@ -1,6 +1,7 @@
 package com.sap.fsm.knowledgebase.domain.exception.handler;
 
 import com.sap.fsm.knowledgebase.domain.exception.BusinessException;
+import com.sap.fsm.knowledgebase.domain.exception.OtherActiveConfigurationPresentException;
 import com.sap.fsm.knowledgebase.domain.exception.ProviderTypePresentException;
 import com.sap.fsm.knowledgebase.domain.exception.SettingPresentException;
 import com.sap.fsm.knowledgebase.domain.exception.ResourceNotExistException;
@@ -46,7 +47,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ 
         ProviderTypePresentException.class,
         ResourceNotExistException.class,
-        SettingPresentException.class })
+        SettingPresentException.class,
+        OtherActiveConfigurationPresentException.class })
     public final ResponseEntity<Object> handleBusinessException(BusinessException ex) {
         ErrorResponse errorResp = new ErrorResponse();
         errorResp.setDetail(ex.getMessage());
