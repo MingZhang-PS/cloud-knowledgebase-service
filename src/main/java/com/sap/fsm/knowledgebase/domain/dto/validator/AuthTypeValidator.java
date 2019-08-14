@@ -14,7 +14,7 @@ public class AuthTypeValidator implements ConstraintValidator<AuthType, String> 
 
         AuthTypeEnum arr[] = AuthTypeEnum.values(); 
         for(AuthTypeEnum e : arr) {
-            if (e.toString() == value) {
+            if (e.toString().equals(value)) {
                 return true;
             }
         }

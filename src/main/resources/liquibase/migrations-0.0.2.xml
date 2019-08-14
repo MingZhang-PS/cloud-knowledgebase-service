@@ -22,10 +22,10 @@
         isActive boolean,
         adapterAuthType varchar(255),
         adapterURL varchar(512),
-        adapterCredential jsonb,
+        adapterCredential text,
         siteAuthType varchar(255),
         siteURL varchar(512),
-        siteCredential jsonb,
+        siteCredential text,
         primary key (id));
 
       alter table if exists ${database.defaultSchemaName}.KnowledgeBaseProviderConfiguration

@@ -19,9 +19,6 @@ import java.util.UUID;;
 
 @Entity
 @Table(name = "knowledgebaseproviderconfiguration")
-@TypeDefs({
-    @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-})
 @Valid
 @Data
 public class ProviderConfiguration {
@@ -59,9 +56,6 @@ public class ProviderConfiguration {
     private String adapterURL;
 
     @Column
-    @Type(
-        type = "jsonb"
-    )
     private String adapterCredential;
     
     @Column
@@ -73,9 +67,6 @@ public class ProviderConfiguration {
     private String siteURL;
 
     @Column
-    @Type(
-        type = "jsonb"
-    )
     private String siteCredential;
 
     @PrePersist

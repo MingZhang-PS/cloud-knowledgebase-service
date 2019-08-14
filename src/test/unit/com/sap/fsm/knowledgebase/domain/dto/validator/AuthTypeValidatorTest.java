@@ -24,7 +24,7 @@ class AuthTypeValidatorTest {
 
 	private static Stream<Arguments> validAuthTypes() {
 		return Stream.of(
-				Arguments.of("NoAuththentication"),
+				Arguments.of("NoAuthentication"),
 				Arguments.of("OAuth2ClientCredential")
 		);
 	}

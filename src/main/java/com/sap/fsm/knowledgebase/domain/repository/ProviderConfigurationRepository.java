@@ -5,7 +5,9 @@ import com.sap.fsm.knowledgebase.domain.model.ProviderConfiguration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 import java.util.Optional;
@@ -16,4 +18,7 @@ public interface ProviderConfigurationRepository extends JpaRepository<ProviderC
         boolean existsByIsActive(Boolean isActive);  
         //Optional<KnowledgeBaseProviderConfiguration> findByIdAndProviderType(UUID id, UUID providerType);
         Page<ProviderConfiguration> findAll(Pageable pageable);
+        @Modifying(clearAutomatically = true)
+        @Transactional
+        Long deleteByProviderType(UUID providerTypeId);
 }

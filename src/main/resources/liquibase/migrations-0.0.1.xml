@@ -23,7 +23,7 @@
         primary key (key));
       
       insert into ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting(lastchanged, key, value) 
-        values (NOW(), 'enabled', '');
+        values (NOW(), 'enabled', 'false');
 
 
     </sql>
@@ -65,6 +65,7 @@
           if old.key = 'enabled'  then
             raise exception 'cannot delete default general setting';
           end if;
+          return old;
         end;
       $$;
     </createProcedure>
@@ -81,6 +82,7 @@
           if old.code = 'MindTouch' or old.code = 'SAP-Native' then
             raise exception 'cannot delete default provider types';
           end if;
+          return old;
         end;
       $$;
     </createProcedure>

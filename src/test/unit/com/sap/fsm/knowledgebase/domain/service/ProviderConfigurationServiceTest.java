@@ -130,7 +130,7 @@ public class ProviderConfigurationServiceTest {
         // when
 
         // then
-        Assertions.assertThrows(ProviderConfigurationPresentException.class, () -> {
+        Assertions.assertThrows(ResourceNotExistException.class, () -> {
             providerConfigurationService.findProviderConfigurationsByProviderTypeCode("MindTouch");
         });
     }

@@ -105,7 +105,7 @@ public class ProviderTypeServiceTest {
     void shouldUpdateProviderTypeSuccessfully() {
         // given
         requestDto.setName("Hello");
-        given(mockRepository.findByIdAndCode(someId, requestDto.getCode())).willReturn(Optional.of(fakeType));
+        given(mockRepository.findById(someId)).willReturn(Optional.of(fakeType));
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
         // when
@@ -121,7 +121,7 @@ public class ProviderTypeServiceTest {
     @DisplayName("Test ProviderTypeService update provider type fails due to resource not found")
     @Test
     void shouldUpdateProviderTypeFailsNotFound() {
-        given(mockRepository.findByIdAndCode(someId, requestDto.getCode())).willReturn(Optional.empty());
+        given(mockRepository.findById(someId)).willReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
             providerTypeService.updateByProviderTypeId(someId, requestDto);
         });

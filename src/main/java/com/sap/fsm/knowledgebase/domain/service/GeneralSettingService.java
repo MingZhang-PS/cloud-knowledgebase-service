@@ -44,7 +44,7 @@ public class GeneralSettingService {
     @Transactional
     public GeneralSettingDto updateBySettingKey(String key,
             GeneralSettingDto requestDto) {
-        GeneralSetting findResult = generalSettingRepository.findByKey(requestDto.getKey())
+        GeneralSetting findResult = generalSettingRepository.findByKey(key)
                 .orElseThrow(() -> new ResourceNotExistException(key));
 
         GeneralSetting setting = findResult;

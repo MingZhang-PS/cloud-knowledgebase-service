@@ -46,7 +46,7 @@ public class ProviderTypeService {
     public ProviderTypeDto updateByProviderTypeId(UUID id,
             ProviderTypeDto requestDto) {
         ProviderType findResult = providerTypeRepository
-                .findByIdAndCode(id, requestDto.getCode())
+                .findById(id)
                 .orElseThrow(() -> new ResourceNotExistException(id.toString()));
 
         ProviderType providerType = findResult;

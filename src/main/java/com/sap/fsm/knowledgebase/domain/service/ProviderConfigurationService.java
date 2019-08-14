@@ -70,7 +70,8 @@ public class ProviderConfigurationService {
                     new ResourceNotExistException(id.toString())
         );
 
-        if (requestDto.getIsActive() && providerConfigurationRepository.existsByIsActive(true)) {
+        if (requestDto.getIsActive() && !config.getIsActive() // from "inactive" to "active"
+              &&  providerConfigurationRepository.existsByIsActive(true)) {
                 throw new OtherActiveConfigurationPresentException();   
         }
 
@@ -101,7 +102,7 @@ public class ProviderConfigurationService {
                 .orElseThrow(() -> new ResourceNotExistException(providerTypeCode));
         ProviderConfiguration config = providerConfigurationRepository
                 .findByProviderType(providerType.getId())
-                .orElseThrow(()->new ProviderConfigurationPresentException(providerTypeCode));
+                .orElseThrow(()->new ResourceNotExistException(providerTypeCode));
         return modelMapper.map(config, ProviderConfigurationDto.class);
     }
 }
