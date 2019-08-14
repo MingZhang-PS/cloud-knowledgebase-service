@@ -20,14 +20,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Integration
-@Transactional
 public class KnowledgeBaseArticleLinkageApiTest {
 
     private static final String RESOURCE_URL_NAME = "/api/knowledge-base/v1/article-linkages";
@@ -135,6 +133,7 @@ public class KnowledgeBaseArticleLinkageApiTest {
 
     @AfterEach
     public void cleanupInitResources() {
+        this.articleLinkageRepository.deleteAll();
         this.articleLinkageDto = null;
     }
 
