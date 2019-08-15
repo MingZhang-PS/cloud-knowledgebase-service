@@ -21,9 +21,9 @@ public class PaginationRecord<T> {
     @ApiModelProperty(value = "Page number of entity list", example = "0")
     private int number;
     @ApiModelProperty(value = "If the entity list is in first page")
-    private boolean first;
+    private Boolean first;
     @ApiModelProperty(value = "If the entity list is in last page")
-    private boolean last;
+    private Boolean last;
     @ApiModelProperty(value = "Number entities of the list", example = "20")
     private int numberOfElements;
     @ApiModelProperty(value = "Total number of entities in the backend", example = "100")

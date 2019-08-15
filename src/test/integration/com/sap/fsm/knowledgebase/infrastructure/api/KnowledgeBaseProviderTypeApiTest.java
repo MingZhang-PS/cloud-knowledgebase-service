@@ -63,7 +63,7 @@ class KnowledgeBaseProviderTypeApiTest {
                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
-                result.andExpect(status().isOk()).andExpect(jsonPath("$.id", is(someCode)))
+                result.andExpect(status().isOk())
                                 .andExpect(jsonPath("$.code", is(providerType.getCode())))
                                 .andExpect(jsonPath("$.name", is(providerType.getName())));
         }

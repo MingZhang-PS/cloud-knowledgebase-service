@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet  id="004_1" author="ming">
+    <preConditions onFail="CONTINUE"
+                   onFailMessage="KnowledgeBaseProviderConfiguration table exists. Changeset skipped."> <!-- http://www.liquibase.org/documentation/preconditions.html -->
+      <not>
+        <tableExists tableName="KnowledgeBaseProviderConfiguration" schemaName="${database.defaultSchemaName}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="knowledgebaseproviderconfiguration" schemaName="${database.defaultSchemaName}">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastchanged" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="providertype" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="isactive" type="BOOL"/>
+            <column name="adapterauthtype" type="VARCHAR(255)"/>
+            <column name="adapterurl" type="VARCHAR(512)"/>
+            <column name="adaptercredential" type="TEXT"/>
+            <column name="siteauthtype" type="VARCHAR(255)"/>
+            <column name="siteurl" type="VARCHAR(512)"/>
+            <column name="sitecredential" type="TEXT"/>
+    </createTable>
+  </changeSet> 
+
+  <changeSet  id="004_2" author="ming">
+        <preConditions onFail="CONTINUE"
+                   onFailMessage="knowledgebaseproviderconfiguration table not exists. Changeset skipped.">
+            <tableExists tableName="knowledgebaseproviderconfiguration" schemaName="${database.defaultSchemaName}"/>
+        </preConditions>
+        <addPrimaryKey columnNames="id" constraintName="knowledgebaseproviderconfiguration_pkey" 
+        tableName="knowledgebaseproviderconfiguration" schemaName="${database.defaultSchemaName}"/>
+  </changeSet>
+  
+  <changeSet id="004_3"  author="ming">
+        <preConditions onFail="CONTINUE"
+                   onFailMessage="knowledgebaseproviderconfiguration table not exists. Changeset skipped.">
+            <tableExists tableName="knowledgebaseproviderconfiguration" schemaName="${database.defaultSchemaName}"/>
+        </preConditions>
+        <addUniqueConstraint 
+            columnNames="providertype"
+            constraintName="providerType_idx"          
+            schemaName="${database.defaultSchemaName}"
+            tableName="knowledgebaseproviderconfiguration"/>
+  </changeSet>
+
+  <changeSet id="004_4" author="ming" >
+    <preConditions onFail="CONTINUE"
+                   onFailMessage="knowledgebaseproviderconfiguration table not exists. Changeset skipped.">
+      <tableExists tableName="knowledgebaseproviderconfiguration" schemaName="${database.defaultSchemaName}"/>
+      <tableExists tableName="knowledgebaseprovidertype" schemaName="${database.defaultSchemaName}"/>
+    </preConditions>
+    <addForeignKeyConstraint baseColumnNames="providertype" baseTableName="knowledgebaseproviderconfiguration"  baseTableSchemaName="${database.defaultSchemaName}"
+      constraintName="providertype_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" 
+      referencedColumnNames="code" referencedTableName="knowledgebaseprovidertype" referencedTableSchemaName="${database.defaultSchemaName}"/>
+  </changeSet>
+</databaseChangeLog>

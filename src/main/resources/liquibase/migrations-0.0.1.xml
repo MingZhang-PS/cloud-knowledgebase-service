@@ -5,56 +5,44 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-  <changeSet failOnError="false" id="001_1" author="ming">
+  <changeSet id="001_1" author="ming">
     <preConditions onFail="CONTINUE"
-                   onFailMessage="KnowledgeBaseGeneralSetting table exists. Changeset skipped."> <!-- http://www.liquibase.org/documentation/preconditions.html -->
+                   onFailMessage="KnowledgeBaseGeneralSetting table exists. Changeset skipped.">
       <not>
-        <tableExists tableName="KnowledgeBaseGeneralSetting" schemaName="${database.defaultSchemaName}"/>
+        <tableExists tableName="knowledgebasegeneralsetting" schemaName="${database.defaultSchemaName}"/>
       </not>
     </preConditions>
-    <comment>Create KnowledgeBaseGeneralSetting table if not exists</comment>
-    <sql>
-      create table ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting
-      ( 
-        lastChanged timestamp, 
-        
-        key varchar(255) not null,
-        value varchar(255),
-        primary key (key));
-      
-      insert into ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting(lastchanged, key, value) 
-        values (NOW(), 'enabled', 'false');
-
-
-    </sql>
+    <createTable tableName="knowledgebasegeneralsetting" schemaName="${database.defaultSchemaName}">
+      <column name="lastchanged" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+      <column name="key" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="value" type="VARCHAR(255)"/>
+    </createTable>
   </changeSet>
 
-  <changeSet failOnError="false" id="001_2" author="ming">
+  <changeSet id="001_2" author="ming">
     <preConditions onFail="CONTINUE"
-                   onFailMessage="KnowledgeBaseProviderType table exists. Changeset skipped."> <!-- http://www.liquibase.org/documentation/preconditions.html -->
-      <not>
-        <tableExists tableName="KnowledgeBaseProviderType" schemaName="${database.defaultSchemaName}"/>
-      </not>
+                   onFailMessage="KnowledgeBaseGeneralSetting table not exists. Changeset skipped.">
+      <tableExists tableName="knowledgebasegeneralsetting" schemaName="${database.defaultSchemaName}"/>
     </preConditions>
-    <comment>Create KnowledgeBaseProviderType table if not exists</comment>
-    <sql>
-      create table ${database.defaultSchemaName}.KnowledgeBaseProviderType
-      ( 
-        lastChanged timestamp, 
-        
-        code varchar(255) not null,
-        name varchar(255),
-        primary key (code));
-
-      insert into ${database.defaultSchemaName}.KnowledgeBaseProviderType( lastchanged, code, name) 
-        values ( NOW(), 'MindTouch', '');
-
-      insert into ${database.defaultSchemaName}.KnowledgeBaseProviderType( lastchanged, code, name) 
-        values ( NOW(), 'SAP-Native', '');
-
-    </sql>
+    <addPrimaryKey columnNames="key" constraintName="knowledgebasegeneralsetting_pkey"
+         tableName="knowledgebasegeneralsetting"  schemaName="${database.defaultSchemaName}"/>
   </changeSet>
+
   <changeSet id="001_3" author="ming">
+    <preConditions onFail="CONTINUE"
+                   onFailMessage="KnowledgeBaseGeneralSetting table not exists. Changeset skipped.">
+      <tableExists tableName="knowledgebasegeneralsetting" schemaName="${database.defaultSchemaName}"/>
+    </preConditions>
+    <insert tableName="knowledgebasegeneralsetting" schemaName="${database.defaultSchemaName}">
+        <column name="lastchanged" valueComputed="NOW()"/>
+        <column name="key" value="enabled"/>
+        <column name="value" value="false"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="001_4" author="ming">
     <createProcedure>
       create or replace function check_del_general_setting() returns trigger
       LANGUAGE plpgsql
@@ -71,25 +59,12 @@
         drop function check_del_general_setting();
     </rollback>
   </changeSet>
-  <changeSet id="001_4" author="ming">
-    <createProcedure>
-      create or replace function check_del_provider_type() returns trigger
-      LANGUAGE plpgsql
-      AS $$
-        begin            
-          if old.code = 'MindTouch' or old.code = 'SAP-Native' then
-            raise exception 'cannot delete default provider types';
-          end if;
-          return old;
-        end;
-      $$;
-    </createProcedure>
-    <rollback>
-        drop function check_del_provider_type();
-    </rollback>
-  </changeSet>
+
   <changeSet id="001_5" author="ming">
-    <comment>Create trigger to avoid default general settings be deleted</comment>
+   <preConditions onFail="CONTINUE"
+                   onFailMessage="KnowledgeBaseGeneralSetting table not exists. Changeset skipped.">
+      <tableExists tableName="knowledgebasegeneralsetting" schemaName="${database.defaultSchemaName}"/>
+    </preConditions>
     <sql>
       drop trigger if exists del_general_setting_trigger on ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting;
       create trigger del_general_setting_trigger before delete on ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting
@@ -99,15 +74,4 @@
       drop trigger del_general_setting_trigger on ${database.defaultSchemaName}.KnowledgeBaseGeneralSetting;
     </rollback>
   </changeSet>
-  <changeSet id="001_6" author="ming">
-    <comment>Create trigger to avoid default provider types be deleted</comment>
-    <sql>
-      drop trigger if exists del_provider_type_trigger on ${database.defaultSchemaName}.KnowledgeBaseProviderType;
-      create trigger del_provider_type_trigger before delete on ${database.defaultSchemaName}.KnowledgeBaseProviderType
-        for each row execute procedure check_del_provider_type();
-    </sql>
-    <rollback>
-      drop trigger del_provider_type_trigger on ${database.defaultSchemaName}.KnowledgeBaseProviderType;
-    </rollback>
-  </changeSet>        
 </databaseChangeLog>

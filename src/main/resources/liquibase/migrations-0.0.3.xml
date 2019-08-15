@@ -5,33 +5,77 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet failOnError="false" id="002_1" author="Peter">
+    <changeSet id="003_1" author="Peter">
         <preConditions onFail="CONTINUE"
                        onFailMessage="KnowledgeBaseArticleLinkage table exists. Changeset skipped."> <!-- http://www.liquibase.org/documentation/preconditions.html -->
             <not>
                 <tableExists tableName="knowledgebasearticlelinkage" schemaName="${database.defaultSchemaName}"/>
             </not>
         </preConditions>
-        <comment>Create KnowledgeBaseArticleLinkage table if not exists</comment>
-        <sql>
-            create table ${database.defaultSchemaName}.knowledgebasearticlelinkage
-            (
-                id uuid unique not null,
-                articleId varchar(512) not null,
-                providerType varchar(512) not null,
-                objectType varchar(512) not null,
-                objectId varchar(512) not null,
-                primary key (id)
-            );
-
-            CREATE INDEX objectTypeToId_index ON ${database.defaultSchemaName}.knowledgebasearticlelinkage (objectType, objectId);
-            CREATE INDEX articleId_index ON ${database.defaultSchemaName}.knowledgebasearticlelinkage (articleId);
-            CREATE INDEX providerTypeToArticleId_index ON ${database.defaultSchemaName}.knowledgebasearticlelinkage (providerType, articleId);
-
-            alter table if exists ${database.defaultSchemaName}.knowledgebasearticlelinkage
-                add constraint record_unique_constraint unique (providerType, articleId, objectType, objectId);
-
-        </sql>
+        <createTable tableName="knowledgebasearticlelinkage" schemaName="${database.defaultSchemaName}">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="articleid" type="VARCHAR(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="providertype" type="VARCHAR(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="objecttype" type="VARCHAR(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="objectid" type="VARCHAR(512)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
     </changeSet>
 
+    <changeSet id="003_2" author="Peter">
+        <preConditions onFail="CONTINUE"
+                       onFailMessage="KnowledgeBaseArticleLinkage table exists. Changeset skipped.">  
+            <tableExists tableName="knowledgebasearticlelinkage" schemaName="${database.defaultSchemaName}"/>
+        </preConditions>
+        <addPrimaryKey columnNames="id" constraintName="knowledgebasearticlelinkage_pkey"
+            tableName="knowledgebasearticlelinkage" schemaName="${database.defaultSchemaName}"/>
+    </changeSet>
+
+    <changeSet id="003_3" author="Peter" >
+        <preConditions onFail="CONTINUE"
+                   onFailMessage="knowledgebasearticlelinkage table not exists. Changeset skipped.">
+            <tableExists tableName="knowledgebasearticlelinkage" schemaName="${database.defaultSchemaName}"/>
+        </preConditions>
+        <createIndex 
+            indexName="objectTypeToId_index"
+            schemaName="${database.defaultSchemaName}"
+            tableName="knowledgebasearticlelinkage">
+            <column name="objecttype" />
+            <column name="objectid" />
+        </createIndex>
+        <createIndex 
+            indexName="articleId_index"
+            schemaName="${database.defaultSchemaName}"
+            tableName="knowledgebasearticlelinkage">
+            <column name="articleid" />
+        </createIndex>
+        <createIndex 
+            indexName="providerTypeToArticleId_index"
+            schemaName="${database.defaultSchemaName}"
+            tableName="knowledgebasearticlelinkage">
+            <column name="providertype" />
+            <column name="articleid" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Peter" id="003_4">
+        <preConditions onFail="CONTINUE"
+                   onFailMessage="knowledgebasearticlelinkage table not exists. Changeset skipped.">
+            <tableExists tableName="knowledgebasearticlelinkage" schemaName="${database.defaultSchemaName}"/>
+        </preConditions>
+        <addUniqueConstraint 
+            columnNames="providertype, articleid, objecttype, objectid"
+            constraintName="record_unique_constraint"
+            schemaName="${database.defaultSchemaName}"
+            tableName="knowledgebasearticlelinkage"/>
+    </changeSet>
 </databaseChangeLog>
