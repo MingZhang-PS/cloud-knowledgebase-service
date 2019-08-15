@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiModel;
 import java.util.Date;
 import javax.validation.constraints.NotBlank;
 
+import com.sap.fsm.knowledgebase.domain.dto.group.Insert;
+
 @ApiModel(value = "Knowledge base provider type dto model")
 @Data
 public class ProviderTypeDto  {
@@ -15,7 +17,7 @@ public class ProviderTypeDto  {
     private Date lastChanged;
 
     @ApiModelProperty(value = "System code of knowledge base provider type", example = "MindTouch,SAP-Native", required = true)
-    @NotBlank
+    @NotBlank(groups={Insert.class})
     private String code;
 
     @ApiModelProperty(value = "Display name of knowledge base provider type")

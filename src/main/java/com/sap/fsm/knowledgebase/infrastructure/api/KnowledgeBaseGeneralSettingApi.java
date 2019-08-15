@@ -2,6 +2,7 @@ package com.sap.fsm.knowledgebase.infrastructure.api;
 
 import com.sap.fsm.knowledgebase.domain.dto.GeneralSettingDto;
 import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
+import com.sap.fsm.knowledgebase.domain.dto.group.Insert;
 import com.sap.fsm.knowledgebase.domain.service.GeneralSettingService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class KnowledgeBaseGeneralSettingApi {
     @PostMapping
     @ResponseBody
     public GeneralSettingDto createGeneralSetting(
-            @Validated @RequestBody GeneralSettingDto requestDto) {
+            @Validated({Insert.class}) @RequestBody GeneralSettingDto requestDto) {
         return generalSettingService.createKnowledgeGeneralSetting(requestDto);
     }
   

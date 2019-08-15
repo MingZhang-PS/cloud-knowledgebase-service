@@ -1,6 +1,7 @@
 package com.sap.fsm.knowledgebase.infrastructure.api;
 
 import com.sap.fsm.knowledgebase.domain.dto.ProviderTypeDto;
+import com.sap.fsm.knowledgebase.domain.dto.group.Insert;
 import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
 import com.sap.fsm.knowledgebase.domain.service.ProviderTypeService;
 
@@ -26,7 +27,7 @@ public class KnowledgeBaseProviderTypeApi {
     @PostMapping
     @ResponseBody
     public ProviderTypeDto createProviderType(
-            @Validated @RequestBody ProviderTypeDto requestDto) {
+            @Validated({Insert.class})  @RequestBody ProviderTypeDto requestDto) {
         return providerTypeService.createProviderType(requestDto);
     }
 
