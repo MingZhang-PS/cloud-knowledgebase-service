@@ -6,15 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiModel;
 
 import java.util.Date;
-import java.util.UUID;
 import javax.validation.constraints.NotBlank;
 
 @ApiModel(value = "Knowledge base provider type dto model")
 @Data
 public class ProviderTypeDto  {
-    @ApiModelProperty(value = "Unique identifier of the knowledge base provider type")
-    private UUID id;
-
     @ApiModelProperty(value = "Timestamp when knowledge base provider type was last changed")
     private Date lastChanged;
 

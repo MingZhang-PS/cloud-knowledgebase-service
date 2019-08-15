@@ -1,22 +1,23 @@
 package com.sap.fsm.knowledgebase.domain.service;
 
-import java.util.Date;
-
-import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.sap.fsm.knowledgebase.domain.dto.GeneralSettingDto;
 import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
 import com.sap.fsm.knowledgebase.domain.exception.ResourceNotExistException;
 import com.sap.fsm.knowledgebase.domain.exception.SettingPresentException;
 import com.sap.fsm.knowledgebase.domain.model.GeneralSetting;
 import com.sap.fsm.knowledgebase.domain.repository.GeneralSettingRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Date;
 
 @Service
 @Transactional(readOnly = true)

@@ -3,7 +3,6 @@ package com.sap.fsm.knowledgebase.domain.service;
 import com.sap.fsm.knowledgebase.domain.dto.ProviderConfigurationDto;
 import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
 import com.sap.fsm.knowledgebase.domain.model.ProviderConfiguration;
-import com.sap.fsm.knowledgebase.domain.model.ProviderType;
 import com.sap.fsm.knowledgebase.domain.repository.ProviderConfigurationRepository;
 import com.sap.fsm.knowledgebase.domain.repository.ProviderTypeRepository;
 import com.sap.fsm.knowledgebase.domain.exception.*;
@@ -41,12 +40,12 @@ public class ProviderConfigurationService {
     public ProviderConfigurationDto createProviderConfiguration(
             ProviderConfigurationDto requestDto) {
         providerTypeRepository
-                .findById(requestDto.getProviderType())
-                .orElseThrow(() -> new ResourceNotExistException(requestDto.getId().toString()));
+                .findByCode(requestDto.getProviderType())
+                .orElseThrow(() -> new ResourceNotExistException(requestDto.getProviderType()));
 
         providerConfigurationRepository
                 .findByProviderType(requestDto.getProviderType()).ifPresent(result -> {
-            throw new ProviderConfigurationPresentException(result.getProviderType().toString());
+            throw new ProviderConfigurationPresentException(result.getProviderType());
         });
 
         if (requestDto.getIsActive() && providerConfigurationRepository.existsByIsActive(true)) {
@@ -62,28 +61,28 @@ public class ProviderConfigurationService {
     @Transactional
     public ProviderConfigurationDto updateProviderConfiguration(UUID id,
             ProviderConfigurationDto requestDto) {
-        providerTypeRepository.findById(requestDto.getProviderType())
-                .orElseThrow(() -> new ResourceNotExistException(requestDto.getProviderType().toString()));
+        providerTypeRepository.findByCode(requestDto.getProviderType())
+                .orElseThrow(() -> new ResourceNotExistException(requestDto.getProviderType()));
 
-        ProviderConfiguration config = providerConfigurationRepository
+        ProviderConfiguration currentConfig = providerConfigurationRepository
                 .findById(id).orElseThrow(() -> 
                     new ResourceNotExistException(id.toString())
         );
 
-        if (requestDto.getIsActive() && !config.getIsActive() // from "inactive" to "active"
+        if (requestDto.getIsActive() && !currentConfig.getIsActive() // from "inactive" to "active"
               &&  providerConfigurationRepository.existsByIsActive(true)) {
                 throw new OtherActiveConfigurationPresentException();   
         }
 
-        config.setAdapterAuthType(requestDto.getAdapterAuthType());
-        config.setAdapterURL(requestDto.getAdapterURL());
-        config.setAdapterCredential(requestDto.getAdapterCredential());
-        config.setIsActive(requestDto.getIsActive());
-        config.setSiteAuthType(requestDto.getSiteAuthType());
-        config.setSiteURL(requestDto.getSiteURL());
-        config.setSiteCredential(requestDto.getSiteCredential());
-        config.setLastChanged(new Date());
-        return modelMapper.map(config, ProviderConfigurationDto.class);
+        currentConfig.setAdapterAuthType(requestDto.getAdapterAuthType());
+        currentConfig.setAdapterURL(requestDto.getAdapterURL());
+        currentConfig.setAdapterCredential(requestDto.getAdapterCredential());
+        currentConfig.setIsActive(requestDto.getIsActive());
+        currentConfig.setSiteAuthType(requestDto.getSiteAuthType());
+        currentConfig.setSiteURL(requestDto.getSiteURL());
+        currentConfig.setSiteCredential(requestDto.getSiteCredential());
+        currentConfig.setLastChanged(new Date());
+        return modelMapper.map(currentConfig, ProviderConfigurationDto.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -98,10 +97,10 @@ public class ProviderConfigurationService {
 
     public ProviderConfigurationDto findProviderConfigurationsByProviderTypeCode(
             String providerTypeCode) {
-        ProviderType providerType = providerTypeRepository.findByCode(providerTypeCode)
+        providerTypeRepository.findByCode(providerTypeCode)
                 .orElseThrow(() -> new ResourceNotExistException(providerTypeCode));
         ProviderConfiguration config = providerConfigurationRepository
-                .findByProviderType(providerType.getId())
+                .findByProviderType(providerTypeCode)
                 .orElseThrow(()->new ResourceNotExistException(providerTypeCode));
         return modelMapper.map(config, ProviderConfigurationDto.class);
     }

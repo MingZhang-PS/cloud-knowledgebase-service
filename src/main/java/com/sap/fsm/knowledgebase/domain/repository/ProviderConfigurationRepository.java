@@ -14,11 +14,13 @@ import java.util.Optional;
 
 @Repository
 public interface ProviderConfigurationRepository extends JpaRepository<ProviderConfiguration, UUID> {
-        Optional<ProviderConfiguration> findByProviderType(UUID providerTypeId); 
-        boolean existsByIsActive(Boolean isActive);  
-        //Optional<KnowledgeBaseProviderConfiguration> findByIdAndProviderType(UUID id, UUID providerType);
+        Optional<ProviderConfiguration> findByProviderType(String providerTypeCode);
+
+        boolean existsByIsActive(Boolean isActive);
+
         Page<ProviderConfiguration> findAll(Pageable pageable);
+
         @Modifying(clearAutomatically = true)
         @Transactional
-        Long deleteByProviderType(UUID providerTypeId);
+        Long deleteByProviderType(String providerTypeCode);
 }

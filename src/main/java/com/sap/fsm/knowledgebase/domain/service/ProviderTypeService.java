@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.modelmapper.ModelMapper;
 
-import java.util.UUID;
 import java.util.Date;
 
 @Service
@@ -34,7 +33,7 @@ public class ProviderTypeService {
     @Transactional
     public ProviderTypeDto createProviderType(ProviderTypeDto requestDto) {
         providerTypeRepository.findByCode(requestDto.getCode()).ifPresent(result -> {
-            throw new ProviderTypePresentException(requestDto.getCode());
+            throw new ProviderTypePresentException(result.getCode());
         });
 
         ProviderType providerType = modelMapper.map(requestDto, ProviderType.class);
@@ -43,21 +42,21 @@ public class ProviderTypeService {
     }
 
     @Transactional
-    public ProviderTypeDto updateByProviderTypeId(UUID id,
+    public ProviderTypeDto updateByProviderTypeCode(String code,
             ProviderTypeDto requestDto) {
         ProviderType findResult = providerTypeRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotExistException(id.toString()));
+                .findByCode(code)
+                .orElseThrow(() -> new ResourceNotExistException(code));
 
         ProviderType providerType = findResult;
-        providerType.setName(requestDto.getName()); // only allow to change name
+        providerType.setName(requestDto.getName());
         providerType.setLastChanged(new Date()); // update field lastChanged to increase version
         return modelMapper.map(providerType, ProviderTypeDto.class);
     }
 
-    public ProviderTypeDto findByProviderTypeId(UUID id) {
-        ProviderType findResult = providerTypeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotExistException(id.toString()));
+    public ProviderTypeDto findByProviderTypeCode(String code) {
+        ProviderType findResult = providerTypeRepository.findByCode(code)
+                .orElseThrow(() -> new ResourceNotExistException(code));
         return modelMapper.map(findResult, ProviderTypeDto.class);
     }
 

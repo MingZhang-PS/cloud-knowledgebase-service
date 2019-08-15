@@ -2,7 +2,6 @@ package com.sap.fsm.knowledgebase.domain.exception;
 
 import org.springframework.http.HttpStatus;
 
-
 public class ResourceNotExistException extends BusinessException {
     private static final long serialVersionUID = 1L;
     private static final String reason = "Resource not found";

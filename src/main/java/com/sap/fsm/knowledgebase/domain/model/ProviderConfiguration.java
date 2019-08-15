@@ -1,12 +1,7 @@
 package com.sap.fsm.knowledgebase.domain.model;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 import org.hibernate.validator.constraints.Length;
-
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
 import lombok.Data;
 
@@ -36,7 +31,7 @@ public class ProviderConfiguration {
 
     @NotNull
     @Column(name = "providertype", nullable = false, updatable = false,  unique = true)
-    private UUID providerType;
+    private String providerType;
     
     
 /*     @JoinColumn(name = "providertype", referencedColumnName = "id", nullable = false, unique = true, updatable = false)

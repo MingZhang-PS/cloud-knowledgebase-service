@@ -44,7 +44,7 @@ class KnowledgeGeneralSettingApiTest {
         // private GeneralSettingRepository mockRepository;
 
         private String someKey = "enabled";
-        private String basePath = "/api/knowledge-base/v1/";
+        private String basePath = "/api/knowledge-base/v1/general-settings";
         private GeneralSetting generalSetting;
         private static final ObjectMapper om = new ObjectMapper();
         private static final ModelMapper mm = new ModelMapper();
@@ -63,7 +63,7 @@ class KnowledgeGeneralSettingApiTest {
 
                 // when
                 ResultActions result = mockMvc.perform(
-                                get(basePath + "general-settings" + "/" + someKey).accept(APPLICATION_JSON_UTF8));
+                                get(basePath + "/" + someKey).accept(APPLICATION_JSON_UTF8));
 
                 // then
                 result.andExpect(status().isOk()).andExpect(jsonPath("$.key", is(generalSetting.getKey())))
@@ -76,7 +76,7 @@ class KnowledgeGeneralSettingApiTest {
 
                 // when
                 ResultActions result = mockMvc
-                                .perform(get(basePath + "general-settings" + "/" + UUID.randomUUID().toString())
+                                .perform(get(basePath + "/" + UUID.randomUUID().toString())
                                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
@@ -89,27 +89,26 @@ class KnowledgeGeneralSettingApiTest {
 
                 // when
                 ResultActions result = mockMvc.perform(
-                                get(basePath + "general-settings" + "?page=0&size=50").accept(APPLICATION_JSON_UTF8));
+                                get(basePath + "?page=0&size=50").accept(APPLICATION_JSON_UTF8));
 
                 // then
                 result.andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.results").isArray())
                                 .andExpect(jsonPath("$.results", hasSize(1)))
                                 .andExpect(jsonPath("$.results[0].key", is(generalSetting.getKey())))
                                 .andExpect(jsonPath("$.totalElements", is(1)));
-
         }
 
         @Test
         public void findGeneralSettingsEmpty() throws Exception {
+                // given
 
                 // when
-                ResultActions result = mockMvc.perform(get(basePath + "general-settings" + "?page=10000&size=50")
+                ResultActions result = mockMvc.perform(get(basePath + "?page=10000&size=50")
                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
                 result.andDo(print()).andExpect(status().isOk())
                                 .andExpect(jsonPath("$.results", IsEmptyCollection.empty()));
-
         }
 
         @Test
@@ -118,14 +117,13 @@ class KnowledgeGeneralSettingApiTest {
                 generalSetting.setKey(null);
 
                 // when
-                ResultActions result = mockMvc.perform(post(basePath + "general-settings")
+                ResultActions result = mockMvc.perform(post(basePath)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(mm.map(generalSetting, GeneralSettingDto.class)))
                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
                 result.andExpect(status().isBadRequest());
-
         }
 
         @Test
@@ -133,7 +131,7 @@ class KnowledgeGeneralSettingApiTest {
                 // given
 
                 // when
-                ResultActions result = mockMvc.perform(post(basePath + "general-settings")
+                ResultActions result = mockMvc.perform(post(basePath)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(mm.map(generalSetting, GeneralSettingDto.class)))
                                 .accept(APPLICATION_JSON_UTF8));
@@ -142,7 +140,6 @@ class KnowledgeGeneralSettingApiTest {
                 result.andDo(print()).andExpect(status().isConflict()).andExpect(jsonPath("$.status", is(409)))
                                 .andExpect(jsonPath("$.title",
                                                 is(new SettingPresentException(generalSetting.getKey()).getReason())));
-
         }
 
         @Test
@@ -152,7 +149,7 @@ class KnowledgeGeneralSettingApiTest {
                 testSetting.setKey("somekey");
                 testSetting.setValue("somevalue");
                 // when
-                ResultActions result = mockMvc.perform(post(basePath + "general-settings")
+                ResultActions result = mockMvc.perform(post(basePath)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(mm.map(testSetting, GeneralSettingDto.class)))
                                 .accept(APPLICATION_JSON_UTF8));
@@ -170,7 +167,7 @@ class KnowledgeGeneralSettingApiTest {
                 UUID randomID = UUID.randomUUID();
                 generalSetting.setKey(randomID.toString());
                 // when
-                ResultActions result = mockMvc.perform(put(basePath + "general-settings" + "/" + randomID)
+                ResultActions result = mockMvc.perform(put(basePath + "/" + randomID)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(mm.map(generalSetting, GeneralSettingDto.class)))
                                 .accept(APPLICATION_JSON_UTF8));
@@ -179,7 +176,6 @@ class KnowledgeGeneralSettingApiTest {
                 result.andDo(print()).andExpect(status().isNotFound()).andExpect(jsonPath("$.status", is(404)))
                                 .andExpect(jsonPath("$.title", is(
                                                 new ResourceNotExistException(generalSetting.getKey()).getReason())));
-
         }
 
         @Test
@@ -192,7 +188,7 @@ class KnowledgeGeneralSettingApiTest {
                 // when
                 GeneralSettingDto requestDto = mm.map(testSetting, GeneralSettingDto.class);
                 requestDto.setValue("change value");
-                ResultActions result = mockMvc.perform(put(basePath + "general-settings" + "/" + testSetting.getKey())
+                ResultActions result = mockMvc.perform(put(basePath + "/" + testSetting.getKey())
                                 .contentType(APPLICATION_JSON_UTF8).content(om.writeValueAsString(requestDto))
                                 .accept(APPLICATION_JSON_UTF8));
 
@@ -201,5 +197,4 @@ class KnowledgeGeneralSettingApiTest {
                                 .andExpect(jsonPath("$.key", is(testSetting.getKey())));
                 repository.deleteByKey(testSetting.getKey());
         }
-
 }

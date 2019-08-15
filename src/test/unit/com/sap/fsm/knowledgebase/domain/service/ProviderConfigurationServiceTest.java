@@ -57,7 +57,7 @@ public class ProviderConfigurationServiceTest {
     private static ProviderConfigurationDto requestDto;
     private static List<ProviderConfiguration> fakeProviderConfigList;
     private static UUID someId = UUID.fromString("6f6c1b6e-0520-4a27-b37f-f34be2d964bf");
-    private static UUID providerTypeId = UUID.fromString("792e87db-f234-4d5f-9aac-b6dcb5980a88");
+    private static String providerTypeCode = "MindTouch";
 
     @BeforeAll
     public static void beforeAll() {
@@ -65,7 +65,7 @@ public class ProviderConfigurationServiceTest {
         fakeProviderConfig.setId(someId);
         fakeProviderConfig.setIsActive(true);
         fakeProviderConfig.setLastChanged(new Date());
-        fakeProviderConfig.setProviderType(providerTypeId);
+        fakeProviderConfig.setProviderType(providerTypeCode);
         fakeProviderConfig.setAdapterAuthType("Basic");
         fakeProviderConfig.setAdapterURL("https://sapdemo-responsive.mindtouch.us");
 
@@ -90,14 +90,14 @@ public class ProviderConfigurationServiceTest {
     void shouldGetProviderConfigurationByTypeCodeSuccessfully() {
         // given
         ProviderType providerType = new ProviderType();
-        providerType.setId(providerTypeId);
-        given(mockProviderTypeRepository.findByCode("MindTouch")).willReturn(Optional.of(providerType));
-        given(mockProviderConfigurationRepository.findByProviderType(providerTypeId)).willReturn(Optional.of(fakeProviderConfig));
+        providerType.setCode(providerTypeCode);
+        given(mockProviderTypeRepository.findByCode(providerTypeCode)).willReturn(Optional.of(providerType));
+        given(mockProviderConfigurationRepository.findByProviderType(providerTypeCode)).willReturn(Optional.of(fakeProviderConfig));
         given(modelMapper.map(any(), eq(ProviderConfigurationDto.class))).willReturn(requestDto);
 
         // when
         ProviderConfigurationDto findResult = providerConfigurationService
-                .findProviderConfigurationsByProviderTypeCode("MindTouch");
+                .findProviderConfigurationsByProviderTypeCode(providerTypeCode);
 
         // then
         assertEquals(fakeProviderConfig.getId(), findResult.getId());
@@ -108,13 +108,13 @@ public class ProviderConfigurationServiceTest {
     @Test
     void shouldGetProviderConfigurationByTypeCodeFailsCodeInvalid() {
         // given
-        given(mockProviderTypeRepository.findByCode("MindTouch")).willReturn(Optional.empty());
+        given(mockProviderTypeRepository.findByCode(providerTypeCode)).willReturn(Optional.empty());
     
         // when
 
         // then
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
-            providerConfigurationService.findProviderConfigurationsByProviderTypeCode("MindTouch");
+            providerConfigurationService.findProviderConfigurationsByProviderTypeCode(providerTypeCode);
         });
     }
 
@@ -123,15 +123,15 @@ public class ProviderConfigurationServiceTest {
     void shouldGetProviderConfigurationByTypeCodeFailsConfigNonExist() {
         // given
         ProviderType providerType = new ProviderType();
-        providerType.setId(providerTypeId);
-        given(mockProviderTypeRepository.findByCode("MindTouch")).willReturn(Optional.of(providerType));
-        given(mockProviderConfigurationRepository.findByProviderType(providerTypeId)).willReturn(Optional.empty());
+        providerType.setCode(providerTypeCode);
+        given(mockProviderTypeRepository.findByCode(providerTypeCode)).willReturn(Optional.of(providerType));
+        given(mockProviderConfigurationRepository.findByProviderType(providerTypeCode)).willReturn(Optional.empty());
     
         // when
 
         // then
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
-            providerConfigurationService.findProviderConfigurationsByProviderTypeCode("MindTouch");
+            providerConfigurationService.findProviderConfigurationsByProviderTypeCode(providerTypeCode);
         });
     }
 
@@ -139,7 +139,7 @@ public class ProviderConfigurationServiceTest {
     @Test
     void shouldCreateProviderConfigurationSuccessfully() {
         // given
-        given(mockProviderTypeRepository.findById(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType()));
+        given(mockProviderTypeRepository.findByCode(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType()));
         given(mockProviderConfigurationRepository.findByProviderType(any())).willReturn(Optional.empty());
         given(mockProviderConfigurationRepository.existsByIsActive(any())).willReturn(false);
         given(modelMapper.map(any(), eq(ProviderConfiguration.class))).willReturn(fakeProviderConfig);
@@ -158,7 +158,7 @@ public class ProviderConfigurationServiceTest {
     @Test
     void shouldCreateProviderConfigurationFailsProviderTypeInvalid() {
         // given
-        given(mockProviderTypeRepository.findById(requestDto.getProviderType())).willReturn(Optional.empty());
+        given(mockProviderTypeRepository.findByCode(requestDto.getProviderType())).willReturn(Optional.empty());
        
         // when
 
@@ -174,7 +174,7 @@ public class ProviderConfigurationServiceTest {
     @Test
     void shouldCreateProviderConfigurationFailsProviderConfigurationPresent() {
         // given
-        given(mockProviderTypeRepository.findById(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType()) );
+        given(mockProviderTypeRepository.findByCode(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType()) );
         given(mockProviderConfigurationRepository.findByProviderType(requestDto.getProviderType())).willReturn(Optional.of(fakeProviderConfig) );
         // when
 
@@ -190,7 +190,7 @@ public class ProviderConfigurationServiceTest {
     @Test
     void shouldCreateProviderConfigurationFailsOtherConfigurationActivated() {
         // given
-        given(mockProviderTypeRepository.findById(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType()) );
+        given(mockProviderTypeRepository.findByCode(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType()) );
         given(mockProviderConfigurationRepository.findByProviderType(requestDto.getProviderType())).willReturn(Optional.empty() );
         given(mockProviderConfigurationRepository.existsByIsActive(true)).willReturn(true );
         // when
@@ -208,7 +208,7 @@ public class ProviderConfigurationServiceTest {
     @Test
     void shouldUpdateProviderConfigurationFailsProviderTypeCodeInvalid() {
         // given
-        given(mockProviderTypeRepository.findById(requestDto.getProviderType())).willReturn(Optional.empty()) ;
+        given(mockProviderTypeRepository.findByCode(requestDto.getProviderType())).willReturn(Optional.empty()) ;
         // when
 
         // then
@@ -223,8 +223,8 @@ public class ProviderConfigurationServiceTest {
     @Test
     void shouldUpdateProviderConfigurationFailsProviderConfigurationNotPresent() {
         // given
-        given(mockProviderTypeRepository.findById(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType())) ;
-        given(mockProviderConfigurationRepository.findById(providerTypeId)).willReturn(Optional.empty() );
+        given(mockProviderTypeRepository.findByCode(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType())) ;
+        given(mockProviderConfigurationRepository.findByProviderType(providerTypeCode)).willReturn(Optional.empty() );
         
         // when
 
@@ -240,7 +240,7 @@ public class ProviderConfigurationServiceTest {
     @Test
     void shouldUpdateProviderConfigurationSuccessfully() {
         // given
-        given(mockProviderTypeRepository.findById(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType())) ;
+        given(mockProviderTypeRepository.findByCode(requestDto.getProviderType())).willReturn(Optional.of(new ProviderType())) ;
         given(mockProviderConfigurationRepository.findById(any())).willReturn(Optional.of(fakeProviderConfig) );
         given(mockProviderConfigurationRepository.existsByIsActive(true)).willReturn(false );
         given(modelMapper.map(any(), eq(ProviderConfigurationDto.class))).willReturn(requestDto);

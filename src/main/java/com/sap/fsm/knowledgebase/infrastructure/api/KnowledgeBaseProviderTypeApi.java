@@ -11,8 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.data.domain.Pageable;
 
 import io.swagger.annotations.*;
-
-import java.util.UUID;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Api(value = "KnowledgeBase Provider Type API", tags = { "KnowledgeBase Provider Type API" })
 @RestController
@@ -23,9 +22,7 @@ public class KnowledgeBaseProviderTypeApi {
     @Autowired
     private ProviderTypeService providerTypeService;
    
-
     @ApiOperation(value = "Create a provider type")
-    @ApiImplicitParam(name = "requestDto", value = "Provider Type Entity", required = true, dataType = "ProviderTypeDto", paramType = "body")
     @PostMapping
     @ResponseBody
     public ProviderTypeDto createProviderType(
@@ -35,31 +32,29 @@ public class KnowledgeBaseProviderTypeApi {
 
     @ApiOperation(value = "Get all provider types")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "page offset", required = false, dataType = "int", paramType = "query"),
-            @ApiImplicitParam(name = "size", value = "page size", required = false, dataType = "int", paramType = "query") })
+            @ApiImplicitParam(name = "page", value = "Page offset", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "Page size", required = false, dataType = "int", paramType = "query") })
     @GetMapping(consumes = MediaType.ALL_VALUE)
     @ResponseBody
-    public PaginationRecord<ProviderTypeDto> findProviderTypes(
+    public PaginationRecord<ProviderTypeDto> findProviderTypes(@ApiIgnore(
+        "Ignored because swagger ui shows the wrong params, " + 
+        "instead they are explained in the implicit params")
         Pageable pageable) {
         return providerTypeService.findProviderTypes(pageable);
     }
 
-    @ApiOperation(value = "Get a provider type by id")
-    @ApiImplicitParam(name = "id", value = "Unique identifier of a Provider Type", required = true, dataType = "UUID", paramType = "path")
-    @GetMapping(value =  "/{id}", consumes = MediaType.ALL_VALUE)
+    @ApiOperation(value = "Get a provider type by code")
+    @GetMapping(value =  "/{code}", consumes = MediaType.ALL_VALUE)
     @ResponseBody
-    public ProviderTypeDto findProviderTypeById(@PathVariable UUID id) {
-        return providerTypeService.findByProviderTypeId(id);
+    public ProviderTypeDto findProviderTypeByCode(@PathVariable String code) {
+        return providerTypeService.findByProviderTypeCode(code);
     }
 
-    @ApiOperation(value = "Update a provider type by id")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "Unique identifier of a Provider Type", required = true, dataType = "UUID", paramType = "path"),
-            @ApiImplicitParam(name = "requestDto", value = "Provider Type Entity", required = true, dataType = "ProviderTypeDto", paramType = "body") })
-    @PutMapping(value =  "/{id}")
+    @ApiOperation(value = "Update a provider type by code")
+    @PutMapping(value =  "/{code}")
     @ResponseBody
-    public ProviderTypeDto updateProviderTypeById(@PathVariable UUID id,
+    public ProviderTypeDto updateProviderTypeById(@PathVariable String code,
             @Validated @RequestBody ProviderTypeDto requestDto) {
-        return providerTypeService.updateByProviderTypeId(id, requestDto);
+        return providerTypeService.updateByProviderTypeCode(code, requestDto);
     }
 }

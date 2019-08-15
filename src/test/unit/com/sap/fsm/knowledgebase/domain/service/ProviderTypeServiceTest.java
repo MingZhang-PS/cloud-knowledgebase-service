@@ -31,7 +31,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
-import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,14 +49,13 @@ public class ProviderTypeServiceTest {
     private static ProviderType fakeType;
     private static ProviderTypeDto requestDto;
     private static List<ProviderType> fakeTypeList;
-    private static UUID someId = UUID.fromString("6f6c1b6e-0520-4a27-b37f-f34be2d964bf");
+    private static String someCode = "MindTouch";
 
     @BeforeAll
     public static void beforeAll() {
         fakeType = new ProviderType();
-        fakeType.setCode("MindTouch");
+        fakeType.setCode(someCode);
         fakeType.setName("test");
-        fakeType.setId(someId);
         fakeType.setLastChanged(new Date());
 
         fakeTypeList = new ArrayList<ProviderType>();
@@ -70,33 +68,30 @@ public class ProviderTypeServiceTest {
         requestDto = new ProviderTypeDto();
         requestDto.setCode(fakeType.getCode());
         requestDto.setName(fakeType.getName());
-        requestDto.setId(fakeType.getId());
         requestDto.setLastChanged(fakeType.getLastChanged());
     }
 
-    @DisplayName("Test ProviderTypeService get provider type by id successfully")
+    @DisplayName("Test ProviderTypeService get provider type by code successfully")
     @Test
-    void shouldGetProviderTypeByIdSuccessfully() {
+    void shouldGetProviderTypeByCodeSuccessfully() {
         // given
-        given(mockRepository.findById(someId)).willReturn(Optional.of(fakeType));
+        given(mockRepository.findByCode(someCode)).willReturn(Optional.of(fakeType));
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
         // when
-        ProviderTypeDto findResult = providerTypeService
-                .findByProviderTypeId(someId);
+        ProviderTypeDto findResult = providerTypeService.findByProviderTypeCode(someCode);
 
         // then
         assertEquals(fakeType.getCode(), findResult.getCode());
-        assertEquals(fakeType.getId(), findResult.getId());
         assertEquals(fakeType.getName(), findResult.getName());
     }
 
-    @DisplayName("Test ProviderTypeService get provider type by id fails due to resource not found")
+    @DisplayName("Test ProviderTypeService get provider type by code fails due to resource not found")
     @Test
-    void shouldGetProviderTypeByIdNotFound() {
-        given(mockRepository.findById(someId)).willReturn(Optional.empty());
+    void shouldGetProviderTypeByCodeNotFound() {
+        given(mockRepository.findByCode(someCode)).willReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
-            providerTypeService.findByProviderTypeId(someId);
+            providerTypeService.findByProviderTypeCode(someCode);
         });
     }
 
@@ -105,25 +100,24 @@ public class ProviderTypeServiceTest {
     void shouldUpdateProviderTypeSuccessfully() {
         // given
         requestDto.setName("Hello");
-        given(mockRepository.findById(someId)).willReturn(Optional.of(fakeType));
+        given(mockRepository.findByCode(someCode)).willReturn(Optional.of(fakeType));
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
         // when
         ProviderTypeDto updateResult = providerTypeService
-                .updateByProviderTypeId(someId, requestDto);
+                .updateByProviderTypeCode(someCode, requestDto);
 
         // then
         assertEquals(requestDto.getName(), updateResult.getName());
         assertEquals(fakeType.getCode(), updateResult.getCode());
-        assertEquals(fakeType.getId(), updateResult.getId());
     }
 
     @DisplayName("Test ProviderTypeService update provider type fails due to resource not found")
     @Test
     void shouldUpdateProviderTypeFailsNotFound() {
-        given(mockRepository.findById(someId)).willReturn(Optional.empty());
+        given(mockRepository.findByCode(someCode)).willReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
-            providerTypeService.updateByProviderTypeId(someId, requestDto);
+            providerTypeService.updateByProviderTypeCode(someCode, requestDto);
         });
     }
 
@@ -142,7 +136,6 @@ public class ProviderTypeServiceTest {
         // then
         assertEquals(fakeType.getName(), saveResult.getName());
         assertEquals(fakeType.getCode(), saveResult.getCode());
-        assertEquals(fakeType.getId(), saveResult.getId());
     }
 
     @DisplayName("Test ProviderTypeService create provider type fails due to code duplication")

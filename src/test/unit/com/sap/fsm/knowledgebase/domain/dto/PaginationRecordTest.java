@@ -11,7 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Unit
 class PaginationRecordTest {
@@ -21,11 +20,9 @@ class PaginationRecordTest {
         // given
         List<ProviderTypeDto> contents = new ArrayList<ProviderTypeDto>();
         ProviderTypeDto firstType = new ProviderTypeDto();
-        firstType.setId(UUID.fromString("684a6910-7510-4458-969f-71d2199695cc"));
         firstType.setCode("SAP-Native");
         contents.add(firstType);
         ProviderTypeDto secondType = new ProviderTypeDto();
-        secondType.setId(UUID.fromString("d9afb0a4-5857-4c96-b690-50e36d06a380"));
         secondType.setCode("MindTouch");
         contents.add(secondType);
 

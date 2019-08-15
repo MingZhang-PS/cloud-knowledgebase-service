@@ -11,8 +11,6 @@ import javax.validation.constraints.NotBlank;
 @ApiModel(value = "Knowledge base general setting dto model")
 @Data
 public class GeneralSettingDto  {
-
-
     @ApiModelProperty(value = "Timestamp when knowledge base general setting was last changed")
     private Date lastChanged;
 
@@ -20,6 +18,6 @@ public class GeneralSettingDto  {
     @NotBlank
     private String key;
 
-    @ApiModelProperty(value = "Value of knowledge base general setting")
+    @ApiModelProperty(value = "Value of knowledge base general setting", example = "\"true\"")
     private String value;
 }

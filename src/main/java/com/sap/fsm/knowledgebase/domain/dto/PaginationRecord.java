@@ -2,20 +2,33 @@ package com.sap.fsm.knowledgebase.domain.dto;
 
 import lombok.Data;
 import org.springframework.data.domain.Page;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+@ApiModel(description = "Generic Pagination Wrapper")
 @Data
 public class PaginationRecord<T> {
+    @ApiModelProperty(value = "List of entities")
     @JsonProperty("results")
     private List<T> content;
+    @ApiModelProperty(value = "Page size of entity list", example = "20")
     private int size;
+    @ApiModelProperty(value = "Page number of entity list", example = "0")
     private int number;
-    private Boolean first;
-    private Boolean last;
+    @ApiModelProperty(value = "If the entity list is in first page")
+    private boolean first;
+    @ApiModelProperty(value = "If the entity list is in last page")
+    private boolean last;
+    @ApiModelProperty(value = "Number entities of the list", example = "20")
     private int numberOfElements;
-    private Long totalElements;
+    @ApiModelProperty(value = "Total number of entities in the backend", example = "100")
+    private long totalElements;
+    @ApiModelProperty(value = "Total page of entities in the backend", example = "5")
     private int totalPages;
 
     public PaginationRecord(Page<T> pageRecords) {

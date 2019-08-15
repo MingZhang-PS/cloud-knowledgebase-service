@@ -39,21 +39,19 @@
     <comment>Create KnowledgeBaseProviderType table if not exists</comment>
     <sql>
       create table ${database.defaultSchemaName}.KnowledgeBaseProviderType
-      ( id uuid not null,
+      ( 
         lastChanged timestamp, 
         
         code varchar(255) not null,
         name varchar(255),
-        primary key (id));
+        primary key (code));
 
-      insert into ${database.defaultSchemaName}.KnowledgeBaseProviderType(id, lastchanged, code, name) 
-        values ('68d0e024-2bef-43c1-ad3c-00af7e48e9c4', NOW(), 'MindTouch', '');
+      insert into ${database.defaultSchemaName}.KnowledgeBaseProviderType( lastchanged, code, name) 
+        values ( NOW(), 'MindTouch', '');
 
-      insert into ${database.defaultSchemaName}.KnowledgeBaseProviderType(id, lastchanged, code, name) 
-        values ('2234e454-2f12-40d8-a58a-3a5d06ccd8a6', NOW(), 'SAP-Native', '');
+      insert into ${database.defaultSchemaName}.KnowledgeBaseProviderType( lastchanged, code, name) 
+        values ( NOW(), 'SAP-Native', '');
 
-      alter table if exists ${database.defaultSchemaName}.KnowledgeBaseProviderType
-            add constraint code_idx unique (code);
     </sql>
   </changeSet>
   <changeSet id="001_3" author="ming">

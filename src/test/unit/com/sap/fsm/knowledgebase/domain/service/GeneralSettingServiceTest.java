@@ -101,7 +101,7 @@ public class GeneralSettingServiceTest {
     void shouldUpdateSettingItemSuccessfully() {
         // given  
         requestDto.setValue("Hello");
-        given(mockRepository.findByKey( someKey))
+        given(mockRepository.findByKey(someKey))
                 .willReturn(Optional.of(fakeSetting));
         given(modelMapper.map(any(), any())).willReturn(requestDto);
 
@@ -117,7 +117,7 @@ public class GeneralSettingServiceTest {
     @DisplayName("Test GeneralSettingService update setting item fails due to resource not found")
     @Test
     void shouldUpdateSettingItemFailsNotFound() {
-        given(mockRepository.findByKey( someKey)).willReturn(Optional.empty());
+        given(mockRepository.findByKey(someKey)).willReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotExistException.class, () -> {
             generalSettingService.updateBySettingKey(someKey, requestDto);
         });

@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.data.domain.Pageable;
 
 import io.swagger.annotations.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.UUID;
 
@@ -22,9 +23,7 @@ public class KnowledgeBaseProviderConfigurationApi {
     @Autowired
     private ProviderConfigurationService providerConfigurationService;
 
-
     @ApiOperation(value = "Create a provider configuration")
-    @ApiImplicitParam(name = "requestDto", value = "Provider configuration", required = true, dataType = "ProviderConfigurationDto", paramType = "body")
     @PostMapping
     @ResponseBody
     public ProviderConfigurationDto createProviderConfiguration(
@@ -32,31 +31,28 @@ public class KnowledgeBaseProviderConfigurationApi {
         return providerConfigurationService.createProviderConfiguration(requestDto);
     }
 
-
     @ApiOperation(value = "Get all provider configuration")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "page offset", required = false, dataType = "int", paramType = "query"),
-            @ApiImplicitParam(name = "size", value = "page size", required = false, dataType = "int", paramType = "query") })
+            @ApiImplicitParam(name = "page", value = "Page offset", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "Page size", required = false, dataType = "int", paramType = "query") })
     @GetMapping( consumes = MediaType.ALL_VALUE)
     @ResponseBody
-    public PaginationRecord<ProviderConfigurationDto> findProviderConfiguration(
-         Pageable pageable) {
+    public PaginationRecord<ProviderConfigurationDto> findProviderConfiguration(@ApiIgnore(
+        "Ignored because swagger ui shows the wrong params, " +
+        "instead they are explained in the implicit params") 
+        Pageable pageable) {
         return providerConfigurationService.findProviderConfigurations(pageable);
     }
   
     @ApiOperation(value = "Get a provider configuration by provider type code")
-    @ApiImplicitParam(name = "providerType", value = "code of provider type", required = true, dataType = "String", paramType = "path")
-    @GetMapping(value =  "/{providerType}", consumes = MediaType.ALL_VALUE)
+    @GetMapping(value =  "/{provider-type}", consumes = MediaType.ALL_VALUE)
     @ResponseBody
     public ProviderConfigurationDto findProviderConfigurationByProviderType(
-            @PathVariable String providerType) {
+            @PathVariable(name="provider-type") String providerType) {
         return providerConfigurationService.findProviderConfigurationsByProviderTypeCode(providerType);
     }
 
     @ApiOperation(value = "Update a configuration by configuration id")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "identifier of a configuration item", required = true, dataType = "UUID", paramType = "path"),
-            @ApiImplicitParam(name = "requestDto", value = "Provider Configuration Item", required = true, dataType = "ProviderConfigurationDto", paramType = "body") })
     @PutMapping(value =  "/{id}")
     @ResponseBody
     public ProviderConfigurationDto updateConfigurationById(@PathVariable UUID id,

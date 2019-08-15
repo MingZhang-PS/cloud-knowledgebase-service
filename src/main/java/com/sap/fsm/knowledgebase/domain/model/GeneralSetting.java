@@ -14,8 +14,7 @@ import java.util.Date;
 @Table(name = "knowledgebasegeneralsetting")
 @Valid
 @Data
-public class GeneralSetting {
-    
+public class GeneralSetting { 
     @Id
     @Column(name = "key", unique = true, nullable = false,  updatable = false)
     @Length(max = 255)
@@ -26,7 +25,6 @@ public class GeneralSetting {
     @Temporal(TemporalType.TIMESTAMP)
     @Version
     private Date lastChanged;
-
 
     @Column
     @Length(max = 255)

@@ -15,7 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface JSONString {
 
-    String message() default "Non-JSON string type is not allowed";
+    String message() default "Non-JSON string is not allowed";
 
     Class<?>[] groups() default {};
 

@@ -15,7 +15,9 @@ import java.util.Optional;
 @Repository
 public interface GeneralSettingRepository extends JpaRepository<GeneralSetting, UUID> {
         Optional<GeneralSetting> findByKey(String key);
+
         Page<GeneralSetting> findAll(Pageable pageable);
+
         @Modifying(clearAutomatically = true)
         @Transactional
         Long deleteByKey(String key);

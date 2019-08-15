@@ -41,13 +41,10 @@ class KnowledgeBaseProviderConfigurationApiTest {
         @Autowired
         private ProviderConfigurationRepository providerConfigurationRepository;
 
-        // @Autowired
-        // private ProviderTypeRepository providerTypeRepository;
-
         private UUID someId = UUID.fromString("b3a69932-2c77-4354-a268-b2cc2b1f0061");
-        private UUID providerTypeId = UUID.fromString("68d0e024-2bef-43c1-ad3c-00af7e48e9c4");
         private String providerTypeCode = "MindTouch";
-        private String basePath = "/api/knowledge-base/v1/";
+        private String anotherProviderTypeCode = "SAP-Native";
+        private String basePath = "/api/knowledge-base/v1/provider-configurations";
         private ProviderConfiguration providerConfiguration;
         private static final ObjectMapper om = new ObjectMapper();
         private static final ModelMapper mm = new ModelMapper();
@@ -57,7 +54,7 @@ class KnowledgeBaseProviderConfigurationApiTest {
                 providerConfiguration = new ProviderConfiguration();
                 providerConfiguration.setId(someId);
                 providerConfiguration.setIsActive(true);
-                providerConfiguration.setProviderType(providerTypeId);
+                providerConfiguration.setProviderType(providerTypeCode);
                 providerConfiguration.setAdapterAuthType("NoAuthentication");
                 providerConfiguration.setAdapterURL("https://www.baidu.com");
         }
@@ -74,7 +71,7 @@ class KnowledgeBaseProviderConfigurationApiTest {
 
                 // when
                 ResultActions result = mockMvc
-                                .perform(get(basePath + "provider-configurations" + "/" + providerTypeCode)
+                                .perform(get(basePath  + "/" + providerTypeCode)
                                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
@@ -91,7 +88,7 @@ class KnowledgeBaseProviderConfigurationApiTest {
 
                 // when
                 ResultActions result = mockMvc
-                                .perform(get(basePath + "provider-configurations" + "/" + UUID.randomUUID().toString())
+                                .perform(get(basePath  + "/" + UUID.randomUUID().toString())
                                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
@@ -103,7 +100,7 @@ class KnowledgeBaseProviderConfigurationApiTest {
                 // given
 
                 // when
-                ResultActions result = mockMvc.perform(get(basePath + "provider-configurations" + "?page=0&size=50")
+                ResultActions result = mockMvc.perform(get(basePath  + "?page=0&size=50")
                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
@@ -116,7 +113,7 @@ class KnowledgeBaseProviderConfigurationApiTest {
                 // given
                 providerConfigurationRepository.save(providerConfiguration);
                 // when
-                ResultActions result = mockMvc.perform(get(basePath + "provider-configurations" + "?page=0&size=50")
+                ResultActions result = mockMvc.perform(get(basePath  + "?page=0&size=50")
                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
@@ -131,7 +128,7 @@ class KnowledgeBaseProviderConfigurationApiTest {
                 providerConfiguration.setProviderType(null);
 
                 // when
-                ResultActions result = mockMvc.perform(post(basePath + "provider-configurations")
+                ResultActions result = mockMvc.perform(post(basePath)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(
                                                 mm.map(providerConfiguration, ProviderConfigurationDto.class)))
@@ -144,10 +141,10 @@ class KnowledgeBaseProviderConfigurationApiTest {
         @Test
         public void createConfigurationFailsInvalidProviderType() throws Exception {
                 // given
-                providerConfiguration.setProviderType(UUID.randomUUID());
+                providerConfiguration.setProviderType(UUID.randomUUID().toString());
 
                 // when
-                ResultActions result = mockMvc.perform(post(basePath + "provider-configurations")
+                ResultActions result = mockMvc.perform(post(basePath)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(
                                                 mm.map(providerConfiguration, ProviderConfigurationDto.class)))
@@ -162,7 +159,7 @@ class KnowledgeBaseProviderConfigurationApiTest {
                 // given
                 providerConfigurationRepository.save(providerConfiguration);
                 // when
-                ResultActions result = mockMvc.perform(post(basePath + "provider-configurations")
+                ResultActions result = mockMvc.perform(post(basePath)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(
                                                 mm.map(providerConfiguration, ProviderConfigurationDto.class)))
@@ -180,9 +177,9 @@ class KnowledgeBaseProviderConfigurationApiTest {
         public void createConfigurationFailsAnotherConfigurationActive() throws Exception {
                 // given
                 providerConfigurationRepository.save(providerConfiguration);
-                providerConfiguration.setProviderType(UUID.fromString("2234e454-2f12-40d8-a58a-3a5d06ccd8a6"));
+                providerConfiguration.setProviderType(anotherProviderTypeCode);
                 // when
-                ResultActions result = mockMvc.perform(post(basePath + "provider-configurations")
+                ResultActions result = mockMvc.perform(post(basePath)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(
                                                 mm.map(providerConfiguration, ProviderConfigurationDto.class)))
@@ -199,7 +196,7 @@ class KnowledgeBaseProviderConfigurationApiTest {
                 // given
 
                 // when
-                ResultActions result = mockMvc.perform(post(basePath + "provider-configurations")
+                ResultActions result = mockMvc.perform(post(basePath)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(
                                                 mm.map(providerConfiguration, ProviderConfigurationDto.class)))
@@ -215,12 +212,12 @@ class KnowledgeBaseProviderConfigurationApiTest {
 
         @Test
         public void updateConfigurationFailsProviderTypeNotFound() throws Exception {
-                // given
-                providerConfiguration.setProviderType(UUID.randomUUID());
+                // given        
+                providerConfiguration.setProviderType(UUID.randomUUID().toString());
 
                 // when
                 ResultActions result = mockMvc
-                                .perform(put(basePath + "provider-configurations" + "/" + providerConfiguration.getId())
+                                .perform(put(basePath + "/" + providerConfiguration.getId())
                                                 .contentType(APPLICATION_JSON_UTF8)
                                                 .content(om.writeValueAsString(mm.map(providerConfiguration,
                                                                 ProviderConfigurationDto.class)))
@@ -240,7 +237,7 @@ class KnowledgeBaseProviderConfigurationApiTest {
 
                 // when
                 ResultActions result = mockMvc
-                                .perform(put(basePath + "provider-configurations" + "/" + providerConfiguration.getId())
+                                .perform(put(basePath + "/" + providerConfiguration.getId())
                                                 .contentType(APPLICATION_JSON_UTF8)
                                                 .content(om.writeValueAsString(mm.map(providerConfiguration,
                                                                 ProviderConfigurationDto.class)))
@@ -262,7 +259,7 @@ class KnowledgeBaseProviderConfigurationApiTest {
 
                 // when
                 ResultActions result = mockMvc
-                                .perform(put(basePath + "provider-configurations" + "/" + providerConfiguration.getId())
+                                .perform(put(basePath + "/" + providerConfiguration.getId())
                                                 .contentType(APPLICATION_JSON_UTF8)
                                                 .content(om.writeValueAsString(mm.map(providerConfiguration,
                                                                 ProviderConfigurationDto.class)))
@@ -275,5 +272,4 @@ class KnowledgeBaseProviderConfigurationApiTest {
                                 .andExpect(jsonPath("$.adapterAuthType",
                                                 is(providerConfiguration.getAdapterAuthType())));
         }
-
 }

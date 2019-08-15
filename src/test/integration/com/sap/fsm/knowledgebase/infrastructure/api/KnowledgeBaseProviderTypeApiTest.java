@@ -40,8 +40,8 @@ class KnowledgeBaseProviderTypeApiTest {
         @Autowired
         private ProviderTypeRepository repository;
 
-        private UUID someId = UUID.fromString("68d0e024-2bef-43c1-ad3c-00af7e48e9c4");
-        private String basePath = "/api/knowledge-base/v1/";
+        private String basePath = "/api/knowledge-base/v1/provider-types";
+        private String someCode = "MindTouch";
         private ProviderType providerType;
         private static final ObjectMapper om = new ObjectMapper();
         private static final ModelMapper mm = new ModelMapper();
@@ -49,22 +49,21 @@ class KnowledgeBaseProviderTypeApiTest {
         @BeforeEach
         void initTestCase() {
                 providerType = new ProviderType();
-                providerType.setId(someId);
                 providerType.setCode("MindTouch");
                 providerType.setLastChanged(new Date());
                 providerType.setName("");
         }
 
         @Test
-        public void findProviderTypeByIdOK() throws Exception {
+        public void findProviderTypeByCodeOK() throws Exception {
                 // given
 
                 // when
-                ResultActions result = mockMvc.perform(get(basePath + "provider-types" + "/" + someId.toString())
+                ResultActions result = mockMvc.perform(get(basePath + "/" + someCode)
                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
-                result.andExpect(status().isOk()).andExpect(jsonPath("$.id", is(someId.toString())))
+                result.andExpect(status().isOk()).andExpect(jsonPath("$.id", is(someCode)))
                                 .andExpect(jsonPath("$.code", is(providerType.getCode())))
                                 .andExpect(jsonPath("$.name", is(providerType.getName())));
         }
@@ -75,7 +74,7 @@ class KnowledgeBaseProviderTypeApiTest {
 
                 // when
                 ResultActions result = mockMvc
-                                .perform(get(basePath + "provider-types" + "/" + UUID.randomUUID().toString())
+                                .perform(get(basePath + "/" + UUID.randomUUID().toString())
                                                 .accept(APPLICATION_JSON_UTF8));
 
                 // then
@@ -88,7 +87,7 @@ class KnowledgeBaseProviderTypeApiTest {
 
                 // when
                 ResultActions result = mockMvc.perform(
-                                get(basePath + "provider-types" + "?page=1&size=50").accept(APPLICATION_JSON_UTF8));
+                                get(basePath + "?page=1&size=50").accept(APPLICATION_JSON_UTF8));
 
                 // then
                 result.andDo(print()).andExpect(status().isOk())
@@ -101,7 +100,7 @@ class KnowledgeBaseProviderTypeApiTest {
 
                 // when
                 ResultActions result = mockMvc.perform(
-                                get(basePath + "provider-types" + "?page=0&size=50").accept(APPLICATION_JSON_UTF8));
+                                get(basePath + "?page=0&size=50").accept(APPLICATION_JSON_UTF8));
 
                 // then
                 result.andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.results").isArray())
@@ -115,7 +114,7 @@ class KnowledgeBaseProviderTypeApiTest {
                 providerType.setCode(null);
 
                 // when
-                ResultActions result = mockMvc.perform(post(basePath + "provider-types")
+                ResultActions result = mockMvc.perform(post(basePath)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(mm.map(providerType, ProviderTypeDto.class)))
                                 .accept(APPLICATION_JSON_UTF8));
@@ -129,7 +128,7 @@ class KnowledgeBaseProviderTypeApiTest {
                 // given
 
                 // when
-                ResultActions result = mockMvc.perform(post(basePath + "provider-types")
+                ResultActions result = mockMvc.perform(post(basePath)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(mm.map(providerType, ProviderTypeDto.class)))
                                 .accept(APPLICATION_JSON_UTF8));
@@ -148,7 +147,7 @@ class KnowledgeBaseProviderTypeApiTest {
                 testProviderType.setName("somename");
 
                 // when
-                ResultActions result = mockMvc.perform(post(basePath + "provider-types")
+                ResultActions result = mockMvc.perform(post(basePath)
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(mm.map(testProviderType, ProviderTypeDto.class)))
                                 .accept(APPLICATION_JSON_UTF8));
@@ -165,10 +164,10 @@ class KnowledgeBaseProviderTypeApiTest {
         public void updateProviderTypeNotFound() throws Exception {
                 // given
                 UUID randomID = UUID.randomUUID();
-                providerType.setId(randomID);
+                providerType.setCode(randomID.toString());
 
                 // when
-                ResultActions result = mockMvc.perform(put(basePath + "provider-types" + "/" + providerType.getId())
+                ResultActions result = mockMvc.perform(put(basePath + "/" + providerType.getCode())
                                 .contentType(APPLICATION_JSON_UTF8)
                                 .content(om.writeValueAsString(mm.map(providerType, ProviderTypeDto.class)))
                                 .accept(APPLICATION_JSON_UTF8));
@@ -176,7 +175,7 @@ class KnowledgeBaseProviderTypeApiTest {
                 // then
                 result.andDo(print()).andExpect(status().isNotFound()).andExpect(jsonPath("$.status", is(404)))
                                 .andExpect(jsonPath("$.title",
-                                                is(new ResourceNotExistException(providerType.getId().toString())
+                                                is(new ResourceNotExistException(providerType.getCode())
                                                                 .getReason())));
         }
 
@@ -184,7 +183,6 @@ class KnowledgeBaseProviderTypeApiTest {
         public void updateProviderTypeSuccessfully() throws Exception {
                 // given
                 ProviderType testProviderType = new ProviderType();
-                testProviderType.setId(UUID.randomUUID());
                 testProviderType.setCode("somecode");
                 testProviderType.setName("somename");
                 repository.save(testProviderType);
@@ -194,7 +192,7 @@ class KnowledgeBaseProviderTypeApiTest {
                 // when
                 ProviderTypeDto requestDto = mm.map(testProviderType, ProviderTypeDto.class);
                 requestDto.setName("change name");
-                ResultActions result = mockMvc.perform(put(basePath + "provider-types" + "/" + testProviderType.getId())
+                ResultActions result = mockMvc.perform(put(basePath + "/" + testProviderType.getCode())
                                 .contentType(APPLICATION_JSON_UTF8).content(om.writeValueAsString(requestDto))
                                 .accept(APPLICATION_JSON_UTF8));
 

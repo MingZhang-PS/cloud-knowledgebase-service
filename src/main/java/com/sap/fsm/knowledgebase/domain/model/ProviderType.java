@@ -1,6 +1,5 @@
 package com.sap.fsm.knowledgebase.domain.model;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 
 import lombok.Data;
@@ -10,7 +9,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import java.util.UUID;
 import java.util.Date;
 
 @Entity
@@ -19,21 +17,16 @@ import java.util.Date;
 @Data
 public class ProviderType {
     @Id
-    @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid2")
-    @Column(name = "id", unique = true)
-    private UUID id;
+    @NotBlank
+    @Column(name = "code", nullable = false, updatable = false,  unique = true)
+    @Length(max = 512)
+    private String code;
 
     @NotNull
     @Column(name = "lastchanged")
     @Temporal(TemporalType.TIMESTAMP)
     @Version
     private Date lastChanged;
-
-    @NotBlank
-    @Column(nullable = false, updatable = false)
-    @Length(max = 512)
-    private String code;
 
     @Column
     @Length(max = 512)

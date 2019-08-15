@@ -9,6 +9,8 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.UUID;
+
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModel;
@@ -23,9 +25,9 @@ public class ProviderConfigurationDto  {
     @ApiModelProperty(value = "Timestamp when knowledge base provider configuration was last changed")
     private Date lastChanged;
 
-    @ApiModelProperty(value = "Unique identifier of knowledge base provider type", required = true)
-    @NotNull
-    private UUID providerType;
+    @ApiModelProperty(value = "System code of knowledge base provider type", required = true)
+    @NotBlank
+    private String providerType;
 
     @ApiModelProperty(value = "If the knowledge base provider configuration is activated", required = true)
     @NotNull
