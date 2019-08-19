@@ -7,7 +7,10 @@ import com.sap.fsm.knowledgebase.domain.exception.ProviderTypePresentException;
 import com.sap.fsm.knowledgebase.domain.exception.SettingPresentException;
 import com.sap.fsm.knowledgebase.domain.exception.ResourceNotExistException;
 import com.sap.fsm.knowledgebase.domain.exception.response.ErrorResponse;
+import com.sap.fsm.knowledgebase.domain.exception.ArticleLinkageExistException;
+import com.sap.fsm.knowledgebase.domain.exception.ArticleLinkageNotExistException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -50,7 +53,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ResourceNotExistException.class,
         SettingPresentException.class,
         OtherActiveConfigurationPresentException.class,
-        ProviderConfigurationPresentException.class })
+        ProviderConfigurationPresentException.class,
+            ArticleLinkageExistException.class,
+            ArticleLinkageNotExistException.class})
     public final ResponseEntity<Object> handleBusinessException(BusinessException ex) {
         ErrorResponse errorResp = new ErrorResponse();
         errorResp.setDetail(ex.getMessage());
@@ -78,4 +83,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         errorResp.setDetail(ex.getMessage());
         return new ResponseEntity<>(errorResp, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler({DataIntegrityViolationException.class})
+    public final ResponseEntity<Object> handleHibernateConstraintViolationException(DataIntegrityViolationException ex) {
+        ErrorResponse errorResp = new ErrorResponse();
+        errorResp.setDetail(ex.getCause().getCause().getMessage());
+        errorResp.setStatus(HttpStatus.CONFLICT);
+        errorResp.setTitle(ex.getCause().getMessage());
+        return new ResponseEntity<>(errorResp, HttpStatus.CONFLICT);
+    }
+
 }

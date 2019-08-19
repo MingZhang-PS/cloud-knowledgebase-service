@@ -78,4 +78,16 @@
             schemaName="${database.defaultSchemaName}"
             tableName="knowledgebasearticlelinkage"/>
     </changeSet>
+
+    <changeSet id="003_5" author="Peter" >
+        <preConditions onFail="CONTINUE"
+                       onFailMessage="knowledgebasearticlelinkage table not exists. Changeset skipped.">
+            <tableExists tableName="knowledgebasearticlelinkage" schemaName="${database.defaultSchemaName}"/>
+            <tableExists tableName="knowledgebaseprovidertype" schemaName="${database.defaultSchemaName}"/>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="providertype" baseTableName="knowledgebasearticlelinkage"  baseTableSchemaName="${database.defaultSchemaName}"
+                                 constraintName="providertype_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="code" referencedTableName="knowledgebaseprovidertype" referencedTableSchemaName="${database.defaultSchemaName}"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -3,7 +3,9 @@ package com.sap.fsm.knowledgebase.domain.service;
 import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
 import com.sap.fsm.knowledgebase.domain.exception.ArticleLinkageNotExistException;
 import com.sap.fsm.knowledgebase.domain.exception.ArticleLinkageExistException;
+import com.sap.fsm.knowledgebase.domain.exception.ResourceNotExistException;
 import com.sap.fsm.knowledgebase.domain.model.ArticleLinkage;
+import com.sap.fsm.knowledgebase.domain.repository.ProviderTypeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,12 +27,15 @@ public class ArticleLinkageService {
     private static final Logger logger = LoggerFactory.getLogger(ArticleLinkageService.class);
     private final ModelMapper modelMapper;
     private final ArticleLinkageRepository articleLinkageRepository;
+    private final ProviderTypeRepository providerTypeRepository;
 
     @Autowired
     public ArticleLinkageService(ModelMapper modelMapper,
-                                 ArticleLinkageRepository articleLinkageRepository) {
+                                 ArticleLinkageRepository articleLinkageRepository,
+                                 ProviderTypeRepository providerTypeRepository) {
         this.modelMapper = modelMapper;
         this.articleLinkageRepository = articleLinkageRepository;
+        this.providerTypeRepository = providerTypeRepository;
     }
 
     // Create Article Linkage
@@ -41,6 +46,10 @@ public class ArticleLinkageService {
             logger.error(errorMsg);
             throw new ArticleLinkageExistException(errorMsg);
         }
+
+        providerTypeRepository
+                .findByCode(articleLinkageDto.getProviderType())
+                .orElseThrow(() -> new ResourceNotExistException(articleLinkageDto.getProviderType()));
 
         ArticleLinkage requestedLinkageModel = this.modelMapper.map(articleLinkageDto,
                 ArticleLinkage.class);

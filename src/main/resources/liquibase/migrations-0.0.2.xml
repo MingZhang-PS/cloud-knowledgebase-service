@@ -37,12 +37,12 @@
     </preConditions>
     <insert tableName="knowledgebaseprovidertype" schemaName="${database.defaultSchemaName}">
         <column name="lastchanged" valueComputed="NOW()"/>
-        <column name="code" value="MindTouch"/>
+        <column name="code" value="SAP-MINDTOUCH"/>
         <column name="name" value=""/>
     </insert>
     <insert tableName="knowledgebaseprovidertype" schemaName="${database.defaultSchemaName}">
         <column name="lastchanged" valueComputed="NOW()"/>
-        <column name="code" value="SAP-Native"/>
+        <column name="code" value="SAP-NATIVE"/>
         <column name="name" value=""/>
     </insert>
   </changeSet>
@@ -53,7 +53,7 @@
       LANGUAGE plpgsql
       AS $$
         begin            
-          if old.code = 'MindTouch' or old.code = 'SAP-Native' then
+          if old.code = 'SAP-MINDTOUCH' or old.code = 'SAP-NATIVE' then
             raise exception 'cannot delete default provider types';
           end if;
           return old;
