@@ -10,7 +10,9 @@ import java.util.UUID;
 
 @Valid
 @Data
-@Entity(name = "knowledgebasearticlelinkage")
+@Entity
+@Table(name = "knowledgebasearticlelinkage", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"providerType", "articleId", "objectType", "objectId"}) })
 public class ArticleLinkage {
     @Id
     @GeneratedValue(generator="system-uuid")

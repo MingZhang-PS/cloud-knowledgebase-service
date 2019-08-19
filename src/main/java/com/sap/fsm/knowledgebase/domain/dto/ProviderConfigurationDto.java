@@ -41,7 +41,7 @@ public class ProviderConfigurationDto  {
     @URL
     private String adapterURL;
 
-    @ApiModelProperty(value = "The credential of knowledge base adapter")
+    @ApiModelProperty(value = "The credential of knowledge base adapter in json format")
     @JSONString
     private String adapterCredential;
 
@@ -52,7 +52,7 @@ public class ProviderConfigurationDto  {
     @URL
     private String siteURL;
 
-    @ApiModelProperty(value = "The credential of knowledge base provider site")
+    @ApiModelProperty(value = "The credential of knowledge base provider site in json format")
     @JSONString
     private String siteCredential;
 }
