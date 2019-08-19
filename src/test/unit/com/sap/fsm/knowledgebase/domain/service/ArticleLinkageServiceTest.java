@@ -5,12 +5,14 @@ import com.sap.fsm.knowledgebase.domain.dto.PaginationRecord;
 import com.sap.fsm.knowledgebase.domain.exception.ArticleLinkageExistException;
 import com.sap.fsm.knowledgebase.domain.exception.ArticleLinkageNotExistException;
 import com.sap.fsm.knowledgebase.domain.model.ArticleLinkage;
+import com.sap.fsm.knowledgebase.domain.model.ProviderType;
 import com.sap.fsm.knowledgebase.domain.repository.ArticleLinkageRepository;
+import com.sap.fsm.knowledgebase.domain.repository.ProviderTypeRepository;
 import com.sap.fsm.springboot.starter.test.annotation.Unit;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.Mockito.verify;
@@ -36,15 +39,15 @@ public class ArticleLinkageServiceTest {
     private ArticleLinkageRepository articleLinkageRepository;
 
     @Mock
+    private ProviderTypeRepository providerTypeRepository;
+
+    @Mock
     private ModelMapper modelMapper;
 
     @InjectMocks
     ArticleLinkageService articleLinkageService;
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Before
+    @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
     }
@@ -62,6 +65,7 @@ public class ArticleLinkageServiceTest {
         when(modelMapper.map(articleLinkageDto, ArticleLinkage.class)).thenReturn(articleLinkageModel);
         when(articleLinkageRepository.save(articleLinkageModel)).thenReturn(articleLinkageModel);
         when(articleLinkageRepository.existsById(articleLinkageDto.getId())).thenReturn(false);
+        when(providerTypeRepository.findByCode(articleLinkageDto.getProviderType())).thenReturn(Optional.of(new ProviderType()));
         when(modelMapper.map(articleLinkageModel, ArticleLinkageDto.class)).thenReturn(articleLinkageDto);
 
         // Test
@@ -71,17 +75,16 @@ public class ArticleLinkageServiceTest {
     }
 
     @Test
-    public void createArticleLinkageForFail() throws ArticleLinkageExistException {
+    public void createArticleLinkageForFail() {
         ArticleLinkageDto articleLinkageDto =
                 new ArticleLinkageDto();
         articleLinkageDto.setId(UUID.randomUUID());
         when(articleLinkageRepository.existsById(articleLinkageDto.getId())).thenReturn(true);
 
-        thrown.expect(ArticleLinkageExistException.class);
-        thrown.expectMessage(String.format("ArticleLinkage already present for id: %s",
-                articleLinkageDto.getId().toString()));
-
-        articleLinkageService.createArticleLinkage(articleLinkageDto);
+        Assertions.assertThrows(ArticleLinkageExistException.class, () -> {
+                articleLinkageService.createArticleLinkage(articleLinkageDto);
+                      }, String.format("ArticleLinkage already present for id: %s",
+                      articleLinkageDto.getId().toString()));      
     }
 
     @Test
@@ -95,14 +98,13 @@ public class ArticleLinkageServiceTest {
     }
 
     @Test
-    public void deleteArticleLinkageByIdForFail() throws ArticleLinkageNotExistException {
+    public void deleteArticleLinkageByIdForFail()  {
         UUID id = UUID.randomUUID();
         when(articleLinkageRepository.existsById(id)).thenReturn(false);
 
-        thrown.expect(ArticleLinkageNotExistException.class);
-        thrown.expectMessage(new ArticleLinkageNotExistException(id.toString()).getMessage());
-
-        articleLinkageService.deleteArticleLinkageById(id);
+        Assertions.assertThrows(ArticleLinkageNotExistException.class, () -> {
+                articleLinkageService.deleteArticleLinkageById(id);
+                      }, new ArticleLinkageNotExistException(id.toString()).getMessage());     
     }
 
     @Test
