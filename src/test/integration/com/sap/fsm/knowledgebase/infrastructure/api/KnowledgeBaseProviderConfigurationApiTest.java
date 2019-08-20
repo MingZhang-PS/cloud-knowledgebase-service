@@ -42,8 +42,8 @@ class KnowledgeBaseProviderConfigurationApiTest {
         private ProviderConfigurationRepository providerConfigurationRepository;
 
         private UUID someId = UUID.fromString("b3a69932-2c77-4354-a268-b2cc2b1f0061");
-        private String providerTypeCode = "MindTouch";
-        private String anotherProviderTypeCode = "SAP-Native";
+        private String providerTypeCode = "SAP-MINDTOUCH";
+        private String anotherProviderTypeCode = "SAP-NATIVE";
         private String basePath = "/api/knowledge-base/v1/provider-configurations";
         private ProviderConfiguration providerConfiguration;
         private static final ObjectMapper om = new ObjectMapper();

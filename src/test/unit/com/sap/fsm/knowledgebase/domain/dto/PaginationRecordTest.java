@@ -20,10 +20,10 @@ class PaginationRecordTest {
         // given
         List<ProviderTypeDto> contents = new ArrayList<ProviderTypeDto>();
         ProviderTypeDto firstType = new ProviderTypeDto();
-        firstType.setCode("SAP-Native");
+        firstType.setCode("SAP-NATIVE");
         contents.add(firstType);
         ProviderTypeDto secondType = new ProviderTypeDto();
-        secondType.setCode("MindTouch");
+        secondType.setCode("SAP-MINDTOUCH");
         contents.add(secondType);
 
         PageImpl<ProviderTypeDto> source = 

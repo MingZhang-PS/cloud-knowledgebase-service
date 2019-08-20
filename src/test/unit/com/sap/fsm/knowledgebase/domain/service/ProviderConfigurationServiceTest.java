@@ -57,7 +57,7 @@ public class ProviderConfigurationServiceTest {
     private static ProviderConfigurationDto requestDto;
     private static List<ProviderConfiguration> fakeProviderConfigList;
     private static UUID someId = UUID.fromString("6f6c1b6e-0520-4a27-b37f-f34be2d964bf");
-    private static String providerTypeCode = "MindTouch";
+    private static String providerTypeCode = "SAP-MINDTOUCH";
 
     @BeforeAll
     public static void beforeAll() {

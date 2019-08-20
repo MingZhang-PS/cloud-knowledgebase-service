@@ -49,7 +49,7 @@ public class ProviderTypeServiceTest {
     private static ProviderType fakeType;
     private static ProviderTypeDto requestDto;
     private static List<ProviderType> fakeTypeList;
-    private static String someCode = "MindTouch";
+    private static String someCode = "SAP-MINDTOUCH";
 
     @BeforeAll
     public static void beforeAll() {

@@ -41,7 +41,7 @@ class KnowledgeBaseProviderTypeApiTest {
         private ProviderTypeRepository repository;
 
         private String basePath = "/api/knowledge-base/v1/provider-types";
-        private String someCode = "MindTouch";
+        private String someCode = "SAP-MINDTOUCH";
         private ProviderType providerType;
         private static final ObjectMapper om = new ObjectMapper();
         private static final ModelMapper mm = new ModelMapper();
@@ -49,7 +49,7 @@ class KnowledgeBaseProviderTypeApiTest {
         @BeforeEach
         void initTestCase() {
                 providerType = new ProviderType();
-                providerType.setCode("MindTouch");
+                providerType.setCode(someCode);
                 providerType.setLastChanged(new Date());
                 providerType.setName("");
         }

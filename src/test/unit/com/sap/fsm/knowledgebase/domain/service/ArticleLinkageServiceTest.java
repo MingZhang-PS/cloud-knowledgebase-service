@@ -130,7 +130,7 @@ public class ArticleLinkageServiceTest {
 
     @Test
     public void retrieveArticleLinkagesByProviderTypeAndArticleId() {
-        String providerType = "MindTouch", articleId = "case_1";
+        String providerType = "SAP-MINDTOUCH", articleId = "case_1";
         Pageable pageable = PageRequest.of(0, 10);
 
         List<ArticleLinkage> modelContent =

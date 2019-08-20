@@ -95,21 +95,21 @@ public class KnowledgeBaseArticleLinkageApiTest {
         ArticleLinkage articleLinkageModel = null;
         while (nIndex++ < initialCapacity) {
             articleLinkageModel = this.modelMapper.map(this.createArticleLinkageDto(
-                    "MindTouch",
+                    "SAP-MINDTOUCH",
                     "article_" + nIndex,
                     "Case",
                     "case_" + nIndex), ArticleLinkage.class);
             articleLinkageDtoList.add(articleLinkageModel);
 
             articleLinkageModel = this.modelMapper.map(this.createArticleLinkageDto(
-                    "SAP-Native",
+                    "SAP-NATIVE",
                     "article_" + nIndex,
                     "Case",
                     "case_" + nIndex), ArticleLinkage.class);
             articleLinkageDtoList.add(articleLinkageModel);
 
             articleLinkageModel = this.modelMapper.map(this.createArticleLinkageDto(
-                    "SAP-Native",
+                    "SAP-NATIVE",
                     "article_" + nIndex,
                     "ServiceMoments",
                     "serviceMoments_" + nIndex), ArticleLinkage.class);
@@ -125,7 +125,7 @@ public class KnowledgeBaseArticleLinkageApiTest {
         this.articleLinkageRepository.deleteAll();
         this.articleLinkageDto =
                 this.createArticleLinkageDto(
-                        "MindTouch",
+                        "SAP-MINDTOUCH",
                         "article_1",
                         "Case",
                         "case_1");
@@ -160,7 +160,7 @@ public class KnowledgeBaseArticleLinkageApiTest {
                 content(this.asJsonString(this.articleLinkageDto)).
                 contentType(MediaType.APPLICATION_JSON_UTF8).
                 accept(MediaType.APPLICATION_JSON_UTF8)).
-                andExpect(status().is5xxServerError());
+                andExpect(status().isConflict());
     }
 
     @Test
@@ -209,9 +209,9 @@ public class KnowledgeBaseArticleLinkageApiTest {
                 andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(2)).
                 andExpect(MockMvcResultMatchers.jsonPath("$.results").isArray()).
                 andExpect(MockMvcResultMatchers.jsonPath("$.results[0].id").exists()).
-                andExpect(MockMvcResultMatchers.jsonPath("$.results[0].providerType").value("MindTouch")).
+                andExpect(MockMvcResultMatchers.jsonPath("$.results[0].providerType").value("SAP-MINDTOUCH")).
                 andExpect(MockMvcResultMatchers.jsonPath("$.results[1].id").exists()).
-                andExpect(MockMvcResultMatchers.jsonPath("$.results[1].providerType").value("SAP-Native")).
+                andExpect(MockMvcResultMatchers.jsonPath("$.results[1].providerType").value("SAP-NATIVE")).
                 andExpect(MockMvcResultMatchers.jsonPath("$.results[2].id").doesNotHaveJsonPath()).
                 andReturn();
     }
@@ -239,11 +239,11 @@ public class KnowledgeBaseArticleLinkageApiTest {
                 andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(3)).
                 andExpect(MockMvcResultMatchers.jsonPath("$.results").isArray()).
                 andExpect(MockMvcResultMatchers.jsonPath("$.results[0].id").exists()).
-                andExpect(MockMvcResultMatchers.jsonPath("$.results[0].providerType").value("MindTouch")).
+                andExpect(MockMvcResultMatchers.jsonPath("$.results[0].providerType").value("SAP-MINDTOUCH")).
                 andExpect(MockMvcResultMatchers.jsonPath("$.results[1].id").exists()).
-                andExpect(MockMvcResultMatchers.jsonPath("$.results[1].providerType").value("SAP-Native")).
+                andExpect(MockMvcResultMatchers.jsonPath("$.results[1].providerType").value("SAP-NATIVE")).
                 andExpect(MockMvcResultMatchers.jsonPath("$.results[2].id").exists()).
-                andExpect(MockMvcResultMatchers.jsonPath("$.results[2].providerType").value("SAP-Native")).
+                andExpect(MockMvcResultMatchers.jsonPath("$.results[2].providerType").value("SAP-NATIVE")).
                 andReturn();
     }
 
@@ -255,7 +255,7 @@ public class KnowledgeBaseArticleLinkageApiTest {
         // Perform get endpoint
         MultiValueMap<String, String> params = new HttpHeaders();
         params.set("articleId", "article_1");
-        params.set("providerType", "SAP-Native");
+        params.set("providerType", "SAP-NATIVE");
         params.set("size", "10");
         params.set("page", "0");
 
